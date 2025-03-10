@@ -1,10 +1,13 @@
 package com.uan.epilepsyalarm20.data.location
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import androidx.annotation.RequiresPermission
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -18,11 +21,11 @@ class LocationManager @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    @SuppressLint("MissingPermission")
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     fun getCurrentLocation(onLocationReceived: (String?) -> Unit) {
         val cancellationTokenSource = CancellationTokenSource()
         fusedLocationClient.getCurrentLocation(
-            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
+            Priority.PRIORITY_HIGH_ACCURACY,
             cancellationTokenSource.token
         ).addOnSuccessListener { location: Location? ->
             if (location != null) {
@@ -37,5 +40,5 @@ class LocationManager @Inject constructor(
     }
 
     private fun createGoogleMapsLink(latitude: Double, longitude: Double): String =
-        "https://www.google.com/maps/place/$latitude,$longitude"
+        "Mi ubicación actual: maps.google.com/?q=$latitude,$longitude"
 }

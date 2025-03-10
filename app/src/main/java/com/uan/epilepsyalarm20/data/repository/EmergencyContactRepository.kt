@@ -2,6 +2,7 @@ package com.uan.epilepsyalarm20.data.repository
 
 import com.uan.epilepsyalarm20.data.local.dao.EmergencyContactDao
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class EmergencyContactRepository @Inject constructor(
@@ -13,7 +14,7 @@ class EmergencyContactRepository @Inject constructor(
     suspend fun deleteEmergencyContactById(id: Long) = 
         emergencyContactDao.deleteEmergencyContactById(id)
 
-    suspend fun getEmergencyContactsByUserId(userId: Long): List<EmergencyContactEntity> =
-        emergencyContactDao.getEmergencyContactsByUserId(userId)
+    fun getEmergencyContacts(): Flow<List<EmergencyContactEntity>> =
+        emergencyContactDao.getEmergencyContacts()
 
 }

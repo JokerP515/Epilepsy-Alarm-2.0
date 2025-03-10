@@ -11,6 +11,6 @@ class UserRepository @Inject constructor(
 ) {
     suspend fun insertUser(user: UserEntity) = userDao.insertUser(user)
 
-    suspend fun getUserById(id: Long) = userDao.getUserById(id)
+    suspend fun getUser() = userDao.getUser()
 
 }

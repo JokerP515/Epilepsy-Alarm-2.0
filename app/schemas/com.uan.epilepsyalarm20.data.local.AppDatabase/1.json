@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "82346388afb1dbae23917a05a98c5691",
+    "identityHash": "6dcf0877b34b4c1a9128a2faa761a006",
     "entities": [
       {
         "tableName": "users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `apellido` TEXT NOT NULL, `tipoDeSangre` TEXT NOT NULL, `tipoDeDocumento` TEXT NOT NULL, `numeroDeDocumento` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nombre` TEXT NOT NULL, `apellido` TEXT NOT NULL, `tipoDeSangre` TEXT NOT NULL, `tipoDeDocumento` TEXT NOT NULL, `numeroDeDocumento` TEXT NOT NULL, `mensajeEmergencia` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -41,6 +41,12 @@
           {
             "fieldPath": "numeroDeDocumento",
             "columnName": "numeroDeDocumento",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mensajeEmergencia",
+            "columnName": "mensajeEmergencia",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -118,7 +124,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '82346388afb1dbae23917a05a98c5691')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6dcf0877b34b4c1a9128a2faa761a006')"
     ]
   }
 }

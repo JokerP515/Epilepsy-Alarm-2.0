@@ -11,7 +11,10 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: UserEntity)
 
-    @Query("SELECT * FROM users WHERE id = :id")
-    suspend fun getUserById(id: Long): UserEntity?
+    @Query("SELECT * FROM users LIMIT 1")
+    suspend fun getUser(): UserEntity?
+
+    @Query("UPDATE users SET mensajeEmergencia = :message WHERE id = 1")
+    suspend fun updateEmergencyMessage(message: String)
 
 }
