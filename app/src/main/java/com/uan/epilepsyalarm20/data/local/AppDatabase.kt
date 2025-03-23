@@ -12,7 +12,7 @@ import com.uan.epilepsyalarm20.data.local.entities.UserEntity
         UserEntity::class,
         EmergencyContactEntity::class
     ],
-    version = 1
+    version = 2
 ) abstract class AppDatabase : RoomDatabase() {
     abstract val userDao: UserDao
     abstract val emergencyContactDao: EmergencyContactDao

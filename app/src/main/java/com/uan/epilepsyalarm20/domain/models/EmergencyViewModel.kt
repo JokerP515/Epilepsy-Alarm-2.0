@@ -1,6 +1,7 @@
 package com.uan.epilepsyalarm20.domain.models
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.ViewModel
@@ -53,7 +54,8 @@ class EmergencyViewModel @Inject constructor(
         }
     }
 
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    //@RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    @SuppressLint("MissingPermission")
     private suspend fun fetchLocation(): String {
         return withTimeoutOrNull(5000) {
             suspendCoroutine { continuation ->
@@ -65,13 +67,15 @@ class EmergencyViewModel @Inject constructor(
         } ?: "Ubicación no disponible"
     }
 
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    //@RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    @SuppressLint("MissingPermission")
     private fun sendMessage(phoneNumber: String, emergencyMessage: String, location: String) {
         messageRepository.sendSms(phoneNumber, emergencyMessage, location)
     }
 
     // TEST ONLY
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE])
+    @SuppressLint("MissingPermission")
+    //@RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE])
     fun emergencyButtonOnClick() {
         viewModelScope.launch {
             val locationDeferred = async { fetchLocation() }
@@ -84,7 +88,7 @@ class EmergencyViewModel @Inject constructor(
             if (userEntity != null) {
                 val message = userEntity.mensajeEmergencia
                 contacts.forEach { contact ->
-                    sendMessage(contact.phoneNumber, message, location)
+                    sendMessage(contact.phoneNumber, message?: "Emergencia", location)
                 }
             }
         }

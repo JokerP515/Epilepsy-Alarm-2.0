@@ -12,5 +12,6 @@ data class UserEntity(
     val tipoDeSangre: String,
     val tipoDeDocumento: String,
     val numeroDeDocumento: String,
-    val mensajeEmergencia: String
+    val mensajeEmergencia: String? = null,
+    val instruccionesEmergencia: String? = null,
 )

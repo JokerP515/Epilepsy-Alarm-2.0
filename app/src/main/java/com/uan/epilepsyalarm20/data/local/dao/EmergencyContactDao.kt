@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -17,5 +18,8 @@ interface EmergencyContactDao {
 
     @Query("DELETE FROM emergency_contacts WHERE id = :id")
     suspend fun deleteEmergencyContactById(id: Long)
+
+    @Update
+    suspend fun updateEmergencyContact(emergencyContact: EmergencyContactEntity)
 
 }

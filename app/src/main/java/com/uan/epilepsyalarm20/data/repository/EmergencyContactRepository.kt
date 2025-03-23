@@ -17,4 +17,7 @@ class EmergencyContactRepository @Inject constructor(
     fun getEmergencyContacts(): Flow<List<EmergencyContactEntity>> =
         emergencyContactDao.getEmergencyContacts()
 
+    suspend fun updateEmergencyContact(emergencyContact: EmergencyContactEntity) =
+        emergencyContactDao.updateEmergencyContact(emergencyContact)
+
 }

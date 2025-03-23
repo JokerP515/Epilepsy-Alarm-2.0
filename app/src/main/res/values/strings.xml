@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">Epilepsy Alarm 2.0</string>
+    <string name="registro_de_usuario">Registro de Usuario</string>
+    <string name="nombre">Nombre</string>
+    <string name="documento">Documento</string>
+    <string name="apellido">Apellido</string>
+    <string name="falta_la_siguiente_informacion">Falta la siguiente información</string>
+    <string name="guardar">Guardar</string>
+    <string name="seleccionar_tipo_documento">Seleccionar Tipo de Documento</string>
+    <string name="tipo_de_documento">Tipo de Documento</string>
+    <string name="seleccionar_tipo_de_sangre">Seleccionar tipo de sangre</string>
+    <string name="tipo_de_sangre">Tipo de Sangre</string>
+    <string name="Mensaje_De_Explicacion">El botón de encendido y apagado, será el activador de la alarma.</string>
+    <string name="configura_la_alarma">Configura la alarma</string>
+    <string name="Explicacion_Funcionamiento_EPAlarm">La aplicación se enfoca principalmente en la atención que se le puede brindar a personas que sufran de ataques de epilepsia en cualquier momento y en cualquier lugar; brindando instrucciones y pasos a seguir al momento de encontrar a una persona sufriendo un ataque epiléptico; de modo que se le pueda brindar unos primeros auxilios de forma correcta.</string>
+    <string name="titulo_funcionamiento_de_la_aplicacion_epilepsy_alarm">Funcionamiento de la Aplicación Epilepsy Alarm</string>
+    <string name="no_volver_a_mostrar_este_mensaje">No volver a mostrar este mensaje</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="explicacion_pantalla_inicio">La sección “Inicio” le permitirá configurar el mensaje de alerta, además de brindar datos o instrucciones adicionales al momento de que la persona sufra un ataque epiléptico.</string>
+    <string name="inicio">Inicio</string>
+    <string name="explicacion_pantalla_configuracion">La sección “Configuración” permite configurar la alarma, desde la cantidad de veces que debe ser presionado el botón de encendido y apagado para que esta se active, hasta el tono de la alarma que va a sonar en caso de la activación de la misma</string>
+    <string name="explicacion_pantalla_contactos">La sección “Contactos“ permite a los usuarios gestionar sus contactos de emergencia, agregar uno nuevo o modificarlo.</string>
+    <string name="contactos">Contactos</string>
+    <string name="configuracion">Configuración</string>
+    <string name="explicacion_pantalla_mi_perfil">La sección “Mi Perfil”, brinda al usuario la posibilidad de cambiar datos personales y modificar estos</string>
+    <string name="mi_perfil">Mi Perfil</string>
 </resources>
