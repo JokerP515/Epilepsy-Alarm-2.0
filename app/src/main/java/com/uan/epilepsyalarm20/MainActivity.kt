@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
@@ -51,10 +52,17 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(startDestination = it)
                 } ?: LoadingScreen()
 
-                if(mainViewModel.isInitialConfigCompleted) {
-                    val intent = Intent(this, EmergencyService::class.java)
-                    startService(intent)
+                // Para activar el servicio de emergencia cuando se completa la configuración inicial
+                LaunchedEffect(mainViewModel.initialConfigCompleted) {
+                    mainViewModel.initialConfigCompleted.collect { isCompleted ->
+                        if (isCompleted) {
+                            val intent = Intent(this@MainActivity, EmergencyService::class.java)
+                            startService(intent)
+                        }
+                    }
                 }
+
+
             }
         }
         requestPermissions()
@@ -66,7 +74,8 @@ class MainActivity : ComponentActivity() {
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
         android.Manifest.permission.SEND_SMS,
         android.Manifest.permission.READ_PHONE_STATE,
-        android.Manifest.permission.WAKE_LOCK
+        android.Manifest.permission.WAKE_LOCK,
+        android.Manifest.permission.CAMERA
     )
 
     // Solicita los permisos estándar

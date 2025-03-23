@@ -25,7 +25,7 @@ class SoundSelectViewModel @Inject constructor(
         if (isPlaying.value) {
             audioPlayer.stopAudio()
         } else {
-            audioPlayer.playAudio(sound.getFileName())
+            audioPlayer.playAudio(sound.getFileName(), false)
         }
     }
 

@@ -18,6 +18,7 @@ class MainViewModel @Inject constructor(
     val isPopupShown = preferencesManager.isPopupShown()
     val isEmergencyMethodSaved = preferencesManager.isEmergencyMethodSaved()
     val isInitialConfigCompleted = preferencesManager.isInitialConfigCompleted()
+    val initialConfigCompleted: StateFlow<Boolean> = preferencesManager.initialConfigCompleted
 
     private val _userExists = MutableStateFlow<Boolean?>(null)
     val userExists: StateFlow<Boolean?> = _userExists

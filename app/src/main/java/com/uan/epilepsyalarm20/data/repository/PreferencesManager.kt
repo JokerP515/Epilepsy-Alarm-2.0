@@ -4,11 +4,15 @@ import android.content.SharedPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
 import androidx.core.content.edit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Singleton
 class PreferencesManager @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) {
+    private val _initialConfigCompleted = MutableStateFlow(isInitialConfigCompleted())
+    val initialConfigCompleted: StateFlow<Boolean> get() = _initialConfigCompleted
 
     // Guardar y recuperar el sonido seleccionado
     fun saveSoundPreference(sound: String) {
@@ -40,10 +44,10 @@ class PreferencesManager @Inject constructor(
     // Guardar y verificar si el usuario ya completó la configuración inicial
     fun setInitialConfigCompleted(completed: Boolean) {
         sharedPreferences.edit() { putBoolean("initial_config_completed", completed) }
+        _initialConfigCompleted.value = completed // Notificar cambio
     }
-
     fun isInitialConfigCompleted(): Boolean {
-        return sharedPreferences.getBoolean("initial_config_completed", false) // Por defecto, no completada
+        return sharedPreferences.getBoolean("initial_config_completed", false)
     }
 
     // Limite de los contactos de emergencia
@@ -58,5 +62,17 @@ class PreferencesManager @Inject constructor(
     fun getContactLimit(): Int {
         return sharedPreferences.getInt("contact_limit", 5) // Valor por defecto
     }
+
+    // Para tener en cuenta si hay o no contactos de emergencia
+    fun saveIsAnyContact() {
+        sharedPreferences.edit() { putBoolean("there_any_contacts", true) }
+    }
+    fun allContactsDeleted() {
+        sharedPreferences.edit() { putBoolean("there_any_contacts", false) }
+    }
+    fun getIsAnyContact() : Boolean {
+        return sharedPreferences.getBoolean("there_any_contacts", false)
+    }
+
 
 }

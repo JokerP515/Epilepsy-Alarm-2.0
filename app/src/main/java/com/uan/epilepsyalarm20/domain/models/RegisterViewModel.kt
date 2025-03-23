@@ -34,8 +34,7 @@ class RegisterViewModel
                 apellido=lastName,
                 tipoDeSangre=bloodType,
                 tipoDeDocumento=documentType,
-                numeroDeDocumento=document,
-                mensajeEmergencia=null.toString()
+                numeroDeDocumento=document
             )
             userRepository.insertUser(user)
         }
