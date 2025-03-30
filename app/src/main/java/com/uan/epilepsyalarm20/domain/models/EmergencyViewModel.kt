@@ -1,10 +1,8 @@
 package com.uan.epilepsyalarm20.domain.models
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.camera2.CameraManager
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,7 +40,6 @@ class EmergencyViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _mapsLink = MutableStateFlow<String?>(null)
-    val mapsLink: StateFlow<String?> = _mapsLink.asStateFlow()
 
     private val _emergencyContacts = MutableStateFlow<List<EmergencyContactEntity>>(emptyList())
     private val emergencyContacts: StateFlow<List<EmergencyContactEntity>> = _emergencyContacts.asStateFlow()
@@ -51,7 +48,6 @@ class EmergencyViewModel @Inject constructor(
     private val user: StateFlow<UserEntity?> = _user.asStateFlow()
 
     private val _isAnyEmergencyContact = MutableStateFlow(false)
-    val isAnyEmergencyContact: StateFlow<Boolean> = _isAnyEmergencyContact.asStateFlow()
 
     private val _countdown = MutableStateFlow(5) // Contador de 5 segundos
     val countdown: StateFlow<Int> = _countdown.asStateFlow()
@@ -79,6 +75,15 @@ class EmergencyViewModel @Inject constructor(
         }
     }
 
+    fun getUserInstructions(): String? {
+        return user.value?.instruccionesEmergencia
+    }
+
+    @RequiresPermission(allOf = [
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE
+    ])
     fun startEmergencyCountdown() {
         _isCancelled.value = false
         _countdown.value = 5
@@ -108,27 +113,31 @@ class EmergencyViewModel @Inject constructor(
         stopTorchFlashing()
     }
 
-    @SuppressLint("MissingPermission")
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private suspend fun fetchLocation(): String {
         return withTimeoutOrNull(5000) {
-            suspendCoroutine { continuation ->
+            suspendCoroutine  { continuation ->
                 locationManager.getCurrentLocation { link ->
-                    Log.d("LocationViewModel", "Ubicación obtenida: $link")
                     continuation.resume(link)
                 }
             }
         } ?: "Ubicación no disponible"
     }
 
-    @SuppressLint("MissingPermission")
+
+    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
     private fun sendMessage(phoneNumber: String, emergencyMessage: String, location: String) {
         messageRepository.sendSms("+57$phoneNumber", emergencyMessage, location)
     }
 
-    @SuppressLint("MissingPermission")
+    @RequiresPermission(allOf = [
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE
+    ])
     fun onActivateEmergency() {
         viewModelScope.launch {
-            val locationDeferred = async { fetchLocation() }
+            val locationDeferred = async  { fetchLocation() }
             val location = locationDeferred.await()
             val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
             _mapsLink.value = location
@@ -150,7 +159,6 @@ class EmergencyViewModel @Inject constructor(
     }
 
     // Encender y apagar la linterna constantemente
-    @SuppressLint("ServiceCast")
     private fun startTorchFlashing() {
         val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         val cameraId = cameraManager.cameraIdList.firstOrNull() ?: return

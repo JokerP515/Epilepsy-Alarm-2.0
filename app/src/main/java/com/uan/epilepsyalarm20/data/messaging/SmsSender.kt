@@ -5,6 +5,7 @@ import android.content.Context
 import android.telephony.SmsManager
 import android.telephony.SubscriptionManager
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresPermission
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -19,7 +20,7 @@ class SmsSender @Inject constructor(
         val activeSubscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
 
         if (activeSubscriptionInfoList.isNullOrEmpty()) {
-            Log.e("SmsSender", "No active SIM card found")
+            Toast.makeText(context, "No se encontró una SIM Card", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -35,7 +36,7 @@ class SmsSender @Inject constructor(
 
         // Verificar si el subscriptionId es válido antes de continuar
         if (subscriptionId == SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
-            Log.e("SmsSender", "No valid SIM subscription found")
+            Toast.makeText(context, "SIM Card no válida", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -46,8 +47,6 @@ class SmsSender @Inject constructor(
             // Enviar el mensaje de texto
             smsManager.sendTextMessage(phoneNumber, null, message, null, null)
             smsManager.sendTextMessage(phoneNumber, null, location, null, null)
-
-            Log.d("SmsSender", "SMS enviado a $phoneNumber usando SIM con ID: $subscriptionId, mensaje: $message")
         } catch (e: Exception) {
             Log.e("SmsSender", "Error al enviar SMS: ${e.message}")
         }

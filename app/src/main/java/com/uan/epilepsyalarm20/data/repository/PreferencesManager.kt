@@ -14,9 +14,12 @@ class PreferencesManager @Inject constructor(
     private val _initialConfigCompleted = MutableStateFlow(isInitialConfigCompleted())
     val initialConfigCompleted: StateFlow<Boolean> get() = _initialConfigCompleted
 
+    private val _emergencyMethodFlow = MutableStateFlow(getEmergencyMethod() ?: "two_touch")
+    val emergencyMethodFlow: StateFlow<String> get() = _emergencyMethodFlow
+
     // Guardar y recuperar el sonido seleccionado
     fun saveSoundPreference(sound: String) {
-        sharedPreferences.edit() { putString("selected_sound", sound) }
+        sharedPreferences.edit { putString("selected_sound", sound) }
     }
     fun getSoundPreference(): String? {
         return sharedPreferences.getString("selected_sound", "alarm_one.mp3") // Valor por defecto
@@ -24,7 +27,7 @@ class PreferencesManager @Inject constructor(
 
     // Desactivar y verificar si se desea mostrar popup
     fun setPopupShown(shown: Boolean) {
-        sharedPreferences.edit() { putBoolean("popup_shown", shown) }
+        sharedPreferences.edit { putBoolean("popup_shown", shown) }
     }
     fun isPopupShown(): Boolean {
         return sharedPreferences.getBoolean("popup_shown", true) // Por defecto, la primera vez es mostrado
@@ -32,18 +35,19 @@ class PreferencesManager @Inject constructor(
 
     // Guardar y recuperar método de emergencia
     fun saveEmergencyMethod(method: String) {
-        sharedPreferences.edit() { putString("emergency_method", method) }
+        sharedPreferences.edit { putString("emergency_method", method) }
+        _emergencyMethodFlow.value = method
+    }
+    fun getEmergencyMethod(): String? {
+        return sharedPreferences.getString("emergency_method", "two_touch")
     }
     fun isEmergencyMethodSaved(): Boolean {
         return sharedPreferences.contains("emergency_method")
     }
-    fun getEmergencyMethod(): String? {
-        return sharedPreferences.getString("emergency_method", null)
-    }
 
     // Guardar y verificar si el usuario ya completó la configuración inicial
     fun setInitialConfigCompleted(completed: Boolean) {
-        sharedPreferences.edit() { putBoolean("initial_config_completed", completed) }
+        sharedPreferences.edit { putBoolean("initial_config_completed", completed) }
         _initialConfigCompleted.value = completed // Notificar cambio
     }
     fun isInitialConfigCompleted(): Boolean {
@@ -52,23 +56,23 @@ class PreferencesManager @Inject constructor(
 
     // Limite de los contactos de emergencia
     fun saveContactCount(count: Int) {
-        sharedPreferences.edit() { putInt("contact_count", count) } // Cambio de clave
+        sharedPreferences.edit { putInt("contact_count", count) } // Cambio de clave
     }
 
     fun getContactCount(): Int {
         return sharedPreferences.getInt("contact_count", 0) // Clave corregida
     }
 
-    fun getContactLimit(): Int {
-        return sharedPreferences.getInt("contact_limit", 5) // Valor por defecto
-    }
+//    fun getContactLimit(): Int {
+//        return sharedPreferences.getInt("contact_limit", 5) // Valor por defecto
+//    }
 
     // Para tener en cuenta si hay o no contactos de emergencia
     fun saveIsAnyContact() {
-        sharedPreferences.edit() { putBoolean("there_any_contacts", true) }
+        sharedPreferences.edit { putBoolean("there_any_contacts", true) }
     }
     fun allContactsDeleted() {
-        sharedPreferences.edit() { putBoolean("there_any_contacts", false) }
+        sharedPreferences.edit { putBoolean("there_any_contacts", false) }
     }
     fun getIsAnyContact() : Boolean {
         return sharedPreferences.getBoolean("there_any_contacts", false)

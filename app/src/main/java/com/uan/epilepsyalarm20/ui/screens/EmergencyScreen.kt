@@ -1,5 +1,6 @@
 package com.uan.epilepsyalarm20.ui.screens
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -13,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,35 +24,41 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uan.epilepsyalarm20.domain.models.EmergencyViewModel
-import kotlin.system.exitProcess
+import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 
-// Screen de ejemplo para obtener la ubicación
-//@Preview(showBackground = true)
+@SuppressLint("MissingPermission")
 @Composable
 fun EmergencyScreen(
-    viewModel: EmergencyViewModel
+    viewModel: EmergencyViewModel,
+    go: (Any) -> Unit,
 ) {
     val context = LocalContext.current
-    val mapsLink by viewModel.mapsLink.collectAsState()
     val countdown by viewModel.countdown.collectAsState()
     val isEmergencyActive by viewModel.isEmergencyActive.collectAsState()
+    val userInstructions = viewModel.getUserInstructions()
 
-    LaunchedEffect(Unit) {
-        viewModel.startEmergencyCountdown()
+    val hasStartedCountdown by remember { derivedStateOf { isEmergencyActive || countdown < 5 } }
+
+    LaunchedEffect(Unit)  {
+        if (!hasStartedCountdown) {
+            viewModel.startEmergencyCountdown()
+        }
     }
 
-    BackHandler { // Detecta el botón "Atrás" y cierra la app
+    BackHandler {
         viewModel.cancelEmergency()
-        (context as? Activity)?.finish()
-        exitProcess(0)
+        val activity = context as? Activity
+        activity?.moveTaskToBack(true)
+        go(Routes.MenuPrincipal)
     }
 
     Column(
@@ -57,17 +66,28 @@ fun EmergencyScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
-            .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()),
+            .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (isEmergencyActive) {
             // UI cuando la emergencia está activa
             Text(
-                text = "🚨 EMERGENCIA ACTIVADA 🚨",
-                style = MaterialTheme.typography.headlineMedium,
+                text = "🚨 EMERGENCIA 🚨",
+                style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
+            Spacer(modifier = Modifier.height(60.dp))
+            if(userInstructions != null) {
+                Text(
+                    text = "Instrucciones o datos adicionales del usuario:\n$userInstructions",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(60.dp))
+            }
         } else {
             // UI durante la cuenta regresiva
             Text(
@@ -85,8 +105,9 @@ fun EmergencyScreen(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
             onClick = {
                 viewModel.cancelEmergency()
-                (context as? Activity)?.finish() // Cierra la app
-                System.exit(0) // Asegura que se cierre completamente
+                val activity = context as? Activity
+                activity?.moveTaskToBack(true)
+                go(Routes.MenuPrincipal)
             }
         ) {
             Text(

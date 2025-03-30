@@ -12,16 +12,17 @@ import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 @Composable
 fun AppNavigation(startDestination: Routes) {
     val navController = rememberNavController()
-
-    Surface(
+    Surface (
         color = MaterialTheme.colorScheme.background
     ) {
         NavHost(
             navController = navController,
             startDestination = Graph.AppGraph
         ) {
-            appGraph(startDestination = startDestination) {
-                route -> navController.navigate(route)
+            appGraph(
+                startDestination = startDestination,
+            ) { route ->
+                navController.navigate(route)
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.uan.epilepsyalarm20.data.location
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import androidx.annotation.RequiresPermission

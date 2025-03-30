@@ -1,14 +1,12 @@
 package com.uan.epilepsyalarm20.domain.models
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uan.epilepsyalarm20.data.local.entities.UserEntity
 import com.uan.epilepsyalarm20.data.repository.UserRepository
-import com.uan.epilepsyalarm20.ui.events.UserEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,17 +17,19 @@ class RegisterViewModel
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    var id by mutableLongStateOf(0L)
+    //var id by mutableLongStateOf(0L)
     var name by mutableStateOf("")
     var lastName by mutableStateOf("")
     var bloodType by mutableStateOf("")
     var documentType by mutableStateOf("")
     var document by mutableStateOf("")
 
+    suspend fun getUser() = userRepository.getUser()
+
     fun saveUser() {
         viewModelScope.launch {
             val user = UserEntity(
-                id=id,
+                id=1,
                 nombre=name,
                 apellido=lastName,
                 tipoDeSangre=bloodType,
@@ -40,29 +40,6 @@ class RegisterViewModel
         }
     }
 
-    fun onEvent(event: UserEvent){
-        when(event) {
-            is UserEvent.OnNameChange -> name = event.name
-            is UserEvent.OnIdChange -> id = event.id
-            is UserEvent.OnLastNameChange -> lastName = event.lastName
-            is UserEvent.OnBloodTypeChange -> bloodType = event.bloodType
-            is UserEvent.OnDocumentTypeChange -> documentType = event.documentType
-            is UserEvent.OnDocumentChange -> document = event.document
-            is UserEvent.onSave -> {
-                saveUser()
-                reset()
-            }
-        }
-    }
-
-    private fun reset() {
-        name = ""
-        id = 0L
-        lastName = ""
-        bloodType = ""
-        documentType = ""
-        document = ""
-    }
 }
 
 enum class BloodType(private val displayName: String){
@@ -77,6 +54,12 @@ enum class BloodType(private val displayName: String){
     ABNEG("AB-");
 
     override fun toString(): String = displayName
+
+    companion object {
+        fun toBloodType(displayName: String): BloodType {
+            return BloodType.entries.find { it.displayName == displayName } ?: SELECTOPTION
+        }
+    }
 }
 
 enum class DocumentType(private val displayName: String){
@@ -85,4 +68,10 @@ enum class DocumentType(private val displayName: String){
     TARJETADEIDENTIDAD("Tarjeta de Identidad"),
     CEDULADEEXTRANJERIA("Cédula de Extranjería");
     override fun toString(): String = displayName
+
+    companion object {
+        fun toDocumentType(displayName: String): DocumentType {
+            return DocumentType.entries.find { it.displayName == displayName } ?: SELECTOPTION
+        }
+    }
 }

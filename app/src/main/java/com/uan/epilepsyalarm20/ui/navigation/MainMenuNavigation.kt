@@ -1,4 +1,4 @@
-package com.uan.epilepsyalarm20.ui.screens.mainMenu
+package com.uan.epilepsyalarm20.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -15,20 +15,28 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-
+import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
+import com.uan.epilepsyalarm20.ui.screens.mainMenu.ActivationMethodScreen
+import com.uan.epilepsyalarm20.ui.screens.mainMenu.ContactsScreen
+import com.uan.epilepsyalarm20.ui.screens.mainMenu.ExplicationScreen
+import com.uan.epilepsyalarm20.ui.screens.mainMenu.InformationScreen
+import com.uan.epilepsyalarm20.ui.screens.mainMenu.RegisterScreen
+import com.uan.epilepsyalarm20.ui.screens.mainMenu.SoundSelectScreen
+import com.uan.epilepsyalarm20.ui.screens.mainMenu.StartScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainMenuScreen(navController: NavHostController) {
+fun MainMenuNavigation(navController: NavHostController) {
     val items = listOf(
         Routes.Inicio to Icons.Default.Home,
         Routes.PerfilUsuario to Icons.Default.Person,
@@ -39,7 +47,10 @@ fun MainMenuScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Menú Principal") })
+            TopAppBar(
+                title = { Text(stringResource(R.string.epilepsy_alarm)) },
+                colors = TopAppBarDefaults.topAppBarColors()
+            )
         },
         bottomBar = {
             NavigationBar {
@@ -52,9 +63,11 @@ fun MainMenuScreen(navController: NavHostController) {
                         label = { Text(route.id) },
                         selected = currentRoute == route.id,
                         onClick = {
-                            navController.navigate(route.id) {
-                                popUpTo(Routes.Inicio.id) { inclusive = false }
-                                launchSingleTop = true
+                            if(currentRoute != route.id) {
+                                navController.navigate(route.id) {
+                                    popUpTo(Routes.Inicio.id) { inclusive = false }
+                                    launchSingleTop = true
+                                }
                             }
                         }
                     )
@@ -63,20 +76,34 @@ fun MainMenuScreen(navController: NavHostController) {
         }
 
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box (modifier = Modifier.padding(innerPadding)) {
             NavHost(
                 navController = navController,
                 startDestination = Routes.Informacion.id
             ) {
-                composable(Routes.Inicio.id) { StartScreen(hiltViewModel()) }
-                composable(Routes.PerfilUsuario.id) { RegisterScreen(hiltViewModel(), {}, true) }
-                composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel()) }
+                composable(Routes.Inicio.id) { StartScreen(hiltViewModel(), navController) }
+                composable(Routes.PerfilUsuario.id) { RegisterScreen(hiltViewModel(), {}, navController, true) }
+                composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(), navController) }
                 composable(Routes.Informacion.id) { InformationScreen() }
-                composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController) }
-                composable(Routes.ConfigActivacionAlarma.id) { ActivationMethodScreen(hiltViewModel(), navController) }
-                composable(Routes.ConfigSonidoAlarma.id) { SoundSelectScreen(hiltViewModel(), hiltViewModel(), navController) }
+                composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController, {}, true) }
+                composable(Routes.ConfigActivacionAlarma.id) {
+                    ActivationMethodScreen(
+                        hiltViewModel(),
+                        navController,
+                        {},
+                        true
+                    )
+                }
+                composable(Routes.ConfigSonidoAlarma.id) {
+                    SoundSelectScreen(
+                        hiltViewModel(),
+                        hiltViewModel(),
+                        navController,
+                        {},
+                        true
+                    )
+                }
             }
-
         }
     }
 }

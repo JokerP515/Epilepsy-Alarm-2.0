@@ -1,11 +1,9 @@
 package com.uan.epilepsyalarm20
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,7 +26,15 @@ import androidx.core.net.toUri
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @SuppressLint("MissingPermission")
+    private val requiredPermission = arrayOf(
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.SEND_SMS,
+        android.Manifest.permission.READ_PHONE_STATE,
+        android.Manifest.permission.WAKE_LOCK,
+        android.Manifest.permission.CAMERA
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -53,7 +59,9 @@ class MainActivity : ComponentActivity() {
                 } ?: LoadingScreen()
 
                 // Para activar el servicio de emergencia cuando se completa la configuración inicial
+                // Verifica permisos necesarios para la emergencia
                 LaunchedEffect(mainViewModel.initialConfigCompleted) {
+                    requestPermissions()
                     mainViewModel.initialConfigCompleted.collect { isCompleted ->
                         if (isCompleted) {
                             val intent = Intent(this@MainActivity, EmergencyService::class.java)
@@ -61,22 +69,9 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-
-
             }
         }
-        requestPermissions()
-        checkMissingPermissions()
     }
-
-    private val requiredPermission = arrayOf(
-        android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-        android.Manifest.permission.SEND_SMS,
-        android.Manifest.permission.READ_PHONE_STATE,
-        android.Manifest.permission.WAKE_LOCK,
-        android.Manifest.permission.CAMERA
-    )
 
     // Solicita los permisos estándar
     private val requestPermissionLauncher =
@@ -86,27 +81,9 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, "Todos los permisos concedidos", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Algunos permisos fueron denegados", Toast.LENGTH_SHORT).show()
+                requestPermissions()
             }
-            checkMissingPermissions() // Verifica permisos restantes
         }
-
-    // Verifica qué permisos faltan y los muestra en Log
-    private fun checkMissingPermissions() {
-        val missingPermissions = requiredPermission.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }
-
-        val missingOverlayPermission = !Settings.canDrawOverlays(this)
-
-        if (missingPermissions.isNotEmpty() || missingOverlayPermission) {
-            Log.d("PermissionsCheck", "Faltan los siguientes permisos: $missingPermissions")
-            if (missingOverlayPermission) {
-                Log.d("PermissionsCheck", "También falta SYSTEM_ALERT_WINDOW")
-            }
-        } else {
-            Log.d("PermissionsCheck", "Todos los permisos han sido concedidos.")
-        }
-    }
 
     // Solicita los permisos estándar y el permiso de superposición por separado
     private fun requestPermissions() {
@@ -134,9 +111,4 @@ class MainActivity : ComponentActivity() {
         )
         startActivity(intent)
     }
-
-
 }
-
-
-
