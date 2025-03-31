@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
                         if (isCompleted) {
                             val intent = Intent(this@MainActivity, EmergencyService::class.java)
                             startService(intent)
+                            Toast.makeText(this@MainActivity, "Servicio de emergencia iniciado", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
