@@ -39,7 +39,7 @@ fun HeadlineCard(title: String, description: String? = null) {
             ) {
                 Text(text = title, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onBackground)
                 if(description != null) {
-                    Text(text = description, style = MaterialTheme.typography.bodyMedium)
+                    Text(text = description, style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }

@@ -42,6 +42,9 @@ class ContactsViewModel @Inject constructor(
                 val newCount = _currentCount.value + 1
                 _currentCount.value = newCount
                 preferencesManager.saveContactCount(newCount)
+                if(newCount == 1){
+                    preferencesManager.saveIsAnyContact()
+                }
             }
             true
         } else {
@@ -55,6 +58,9 @@ class ContactsViewModel @Inject constructor(
             val newCount = _currentCount.value - 1
             _currentCount.value = newCount
             preferencesManager.saveContactCount(newCount)
+            if (newCount == 0) {
+                preferencesManager.allContactsDeleted()
+            }
         }
     }
 

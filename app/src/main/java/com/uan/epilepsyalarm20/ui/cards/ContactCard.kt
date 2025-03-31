@@ -8,20 +8,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.theme.defaultCardColors
 
 @Composable
@@ -59,23 +60,24 @@ fun ContactCard(
                     modifier = Modifier.weight(1f)
                 ){
                     Text(
-                        text = "Modificar",
+                        text = stringResource(R.string.modificar),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button (
                     onClick = { onDelete() },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    )
                 ){
                     Text(
-                        text = "Eliminar",
+                        text = stringResource(R.string.eliminar),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
-//                CustomButton("Modificar") { showDialog = true }
-//
-//                CustomButton("Eliminar") { onDelete() }
             }
         }
     }

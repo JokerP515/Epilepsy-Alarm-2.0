@@ -25,7 +25,7 @@ class SoundSelectViewModel @Inject constructor(
         if (isPlaying.value) {
             audioPlayer.stopAudio()
         } else {
-            audioPlayer.playAudio(sound.getFileName())
+            audioPlayer.playAudio(sound.getFileName(), false)
         }
     }
 
@@ -39,4 +39,10 @@ enum class Sounds (private val displayName: String, private val fileName: String
 
     override fun toString(): String = displayName
     fun getFileName(): String = fileName
+
+    companion object {
+        fun toEnumSounds(fileName: String): Sounds {
+            return Sounds.entries.find { it.fileName == fileName } ?: SELECTOPTION
+        }
+    }
 }

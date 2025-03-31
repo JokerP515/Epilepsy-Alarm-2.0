@@ -10,21 +10,40 @@ import android.content.IntentFilter
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.uan.epilepsyalarm20.EmergencyActivity
 import com.uan.epilepsyalarm20.R
+import com.uan.epilepsyalarm20.data.repository.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EmergencyService : Service() {
 
+    @Inject
+    lateinit var preferencesManager: PreferencesManager
+
     private var powerButtonPressCount = 0
     private var lastPowerPressTime = 0L
 
+    private var _emergencyMethod = "two_touch"
+
     override fun onCreate() {
         super.onCreate()
+        observeEmergencyMethodChanges()
         startForegroundServiceWithNotification()
+    }
+
+    // Observar cambios en la forma de activación en tiempo de ejecución
+    private fun observeEmergencyMethodChanges() {
+        CoroutineScope(Dispatchers.IO).launch {
+            preferencesManager.emergencyMethodFlow.collect { newMethod ->
+                _emergencyMethod = newMethod
+            }
+        }
     }
 
 
@@ -33,17 +52,27 @@ class EmergencyService : Service() {
         return START_STICKY
     }
 
-    /**
-     *  Detecta la pulsación del botón de encendido
-     *  OJO, POSIBLEMENTE MUY INTRUSIVO SI powerButtonPressCount = 1
-     */
+
+    //Detecta el encendido/apagado del dispositivo en una ventana de tiempo determinada (5 segundos)
     private fun detectPowerButtonPress() {
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastPowerPressTime < 3500) {
+        if (currentTime - lastPowerPressTime < 4000) {
             powerButtonPressCount++
-            if (powerButtonPressCount in 2..3) {
+
+            // Depende de la configuración de emergencia del usuario si son 2 o 3 encendidos/apagados
+            if((_emergencyMethod == "two_touch" && powerButtonPressCount == 2)
+                || (_emergencyMethod == "three_touch" && powerButtonPressCount == 3)
+                ) {
+                powerButtonPressCount = 1
                 showEmergencyPopup()
             }
+
+            if((_emergencyMethod == "two_touch" && powerButtonPressCount > 2)
+                || (_emergencyMethod == "three_touch" && powerButtonPressCount > 3)
+            ) {
+                powerButtonPressCount = 1
+            }
+
         } else {
             powerButtonPressCount = 1
         }
@@ -51,7 +80,7 @@ class EmergencyService : Service() {
     }
 
     /**
-     * Escucha eventos del botón de encendido
+     * Escucha eventos del encendido/apagado del dispositivo
      */
     private fun listenForKeyPresses() {
         val receiver = object : BroadcastReceiver() {
@@ -87,7 +116,6 @@ class EmergencyService : Service() {
      */
     private fun showEmergencyPopup() {
         showEmergencyScreen(this)
-        Log.d("EmergencyService", "EmergencyActivity iniciada")
     }
 
     /**

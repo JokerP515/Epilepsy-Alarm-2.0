@@ -12,7 +12,7 @@ sealed class Routes(val id: String) {
     @Serializable
     data object PerfilUsuario : Routes("Perfil")
     @Serializable
-    data object ConfigAlarma : Routes("Configuracion")
+    data object ConfigAlarma : Routes("Config")
     @Serializable
     data object ConfigActivacionAlarma: Routes("configuracion_activacion_alarma")
     @Serializable
@@ -23,4 +23,6 @@ sealed class Routes(val id: String) {
     data object Contactos: Routes("Contactos")
     @Serializable
     data object MenuPrincipal: Routes("menu_principal")
+    @Serializable
+    data object Emergencia: Routes("emergencia")
 }

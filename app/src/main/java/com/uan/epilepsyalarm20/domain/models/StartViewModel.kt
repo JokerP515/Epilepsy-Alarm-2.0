@@ -11,7 +11,7 @@ import javax.inject.Inject
 class StartViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    suspend fun getUser() = userRepository.getUser()
+    //suspend fun getUser() = userRepository.getUser()
 
     suspend fun getEmergencyMessage() = userRepository.getEmergencyMessage()
     suspend fun getEmergencyInstructions() = userRepository.getEmergencyInstructions()

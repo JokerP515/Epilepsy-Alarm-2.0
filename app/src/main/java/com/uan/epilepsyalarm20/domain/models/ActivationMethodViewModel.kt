@@ -12,6 +12,7 @@ class ActivationMethodViewModel @Inject constructor(
     fun saveActivationMethod(method: String) {
         preferencesManager.saveEmergencyMethod(method)
     }
+    fun getActivationMethod(): String = preferencesManager.getEmergencyMethod() ?: "two_touch"
 }
 
 enum class ActivationMethod(private val displayName: String, private val value: String) {
@@ -20,4 +21,10 @@ enum class ActivationMethod(private val displayName: String, private val value: 
 
     override fun toString(): String = displayName
     fun getValue(): String = value
+
+    companion object {
+        fun toEnumActivationMethod(value: String): ActivationMethod {
+            return ActivationMethod.entries.find { it.value == value } ?: TWO_TOUCH
+        }
+    }
 }
