@@ -1,4 +1,4 @@
-package com.uan.epilepsyalarm20.ui.screens.mainMenu
+package com.uan.epilepsyalarm20.ui.screens.menu
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -31,7 +31,6 @@ import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.StartViewModel
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
-import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.textFieldColors
 import kotlinx.coroutines.launch
@@ -60,14 +59,8 @@ fun StartScreen(viewModel: StartViewModel, navController: NavHostController) {
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.Center
     ) {
-
-        HeadlineCard(
-            title = stringResource(R.string.configura_mensaje_instrucciones),
-            description = stringResource(R.string.explicacion_pantalla_inicio_mensajes)
-        )
-
         OutlinedTextField(
             value = message,
             onValueChange = { message = it },
@@ -77,6 +70,8 @@ fun StartScreen(viewModel: StartViewModel, navController: NavHostController) {
             modifier = Modifier.fillMaxWidth()
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         CustomButton(text = stringResource(R.string.guardar)) {
             if(message.isNotEmpty()){
                 viewModel.updateEmergencyMessage(message)
@@ -84,7 +79,7 @@ fun StartScreen(viewModel: StartViewModel, navController: NavHostController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
             value = instructions,
@@ -94,6 +89,8 @@ fun StartScreen(viewModel: StartViewModel, navController: NavHostController) {
             colors = textFieldColors(),
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         CustomButton(text = stringResource(R.string.guardar)) {
             if(instructions.isNotEmpty()){

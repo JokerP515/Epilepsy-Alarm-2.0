@@ -1,4 +1,4 @@
-package com.uan.epilepsyalarm20.ui.screens.mainMenu
+package com.uan.epilepsyalarm20.ui.screens.menu
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -76,8 +77,13 @@ fun ActivationMethodScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeadlineCard(
-            title = stringResource(R.string.configura_la_alarma),
-            description = stringResource(R.string.explicacion_activacion_alarma)
+            title = stringResource(R.string.configura_la_alarma)
+        )
+
+        Text(
+            text = stringResource(R.string.explicacion_activacion_alarma),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Image(

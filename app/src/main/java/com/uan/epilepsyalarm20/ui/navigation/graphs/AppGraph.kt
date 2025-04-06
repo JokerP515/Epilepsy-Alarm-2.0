@@ -6,13 +6,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ExplicationScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ExplicationScreen
 import com.uan.epilepsyalarm20.ui.screens.InitialNotificationScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ActivationMethodScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ActivationMethodScreen
 import com.uan.epilepsyalarm20.ui.navigation.MainMenuNavigation
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.RegisterScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.SoundSelectScreen
-import com.uan.epilepsyalarm20.ui.screens.EmergencyScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.RegisterScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.SoundSelectScreen
 
 fun NavGraphBuilder.appGraph(
     startDestination: Routes,
@@ -43,10 +42,6 @@ fun NavGraphBuilder.appGraph(
         // Seleccionar el sonido de la alarma
         composable<Routes.ConfigSonidoAlarma> {
             SoundSelectScreen(hiltViewModel(), hiltViewModel(), null, go)
-        }
-
-        composable<Routes.Emergencia> {
-            EmergencyScreen(hiltViewModel(), go)
         }
     }
 }

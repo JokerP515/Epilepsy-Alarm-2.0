@@ -19,8 +19,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -59,6 +62,10 @@ class EmergencyViewModel @Inject constructor(
 
     private var torchJob: Job? = null // Para manejar la linterna
 
+    private val _exitEmergencyScreen = MutableSharedFlow<Unit>()
+    val exitEmergencyScreen: SharedFlow<Unit> = _exitEmergencyScreen.asSharedFlow()
+
+
     init {
         viewModelScope.launch {
             launch {
@@ -74,6 +81,10 @@ class EmergencyViewModel @Inject constructor(
             }
         }
     }
+
+    suspend fun getUser() = userRepository.getUser()
+
+    suspend fun getFirstEmergencyContact() = emergencyRepository.getFirstEmergencyContact()
 
     fun getUserInstructions(): String? {
         return user.value?.instruccionesEmergencia
@@ -111,6 +122,10 @@ class EmergencyViewModel @Inject constructor(
         _isEmergencyActive.value = false
         audioPlayer.stopAudio()
         stopTorchFlashing()
+
+        viewModelScope.launch {
+            _exitEmergencyScreen.emit(Unit)
+        }
     }
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -136,19 +151,15 @@ class EmergencyViewModel @Inject constructor(
         Manifest.permission.READ_PHONE_STATE
     ])
     fun onActivateEmergency() {
+        val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
+
         viewModelScope.launch {
             val locationDeferred = async  { fetchLocation() }
             val location = locationDeferred.await()
-            val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
             _mapsLink.value = location
-
             val userEntity = user.value
             val contacts = emergencyContacts.value
-
             _isEmergencyActive.value = true
-            audioPlayer.playAudio(soundFile, true)
-            startTorchFlashing()
-
             if (userEntity != null && _isAnyEmergencyContact.value) {
                 val message = userEntity.mensajeEmergencia
                 contacts.forEach { contact ->
@@ -156,6 +167,9 @@ class EmergencyViewModel @Inject constructor(
                 }
             }
         }
+
+        audioPlayer.playAudio(soundFile, true)
+        startTorchFlashing()
     }
 
     // Encender y apagar la linterna constantemente

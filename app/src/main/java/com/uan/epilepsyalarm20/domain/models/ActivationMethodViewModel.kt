@@ -16,8 +16,8 @@ class ActivationMethodViewModel @Inject constructor(
 }
 
 enum class ActivationMethod(private val displayName: String, private val value: String) {
-    TWO_TOUCH("Oprimir 2 veces el botón de encendido", "two_touch"),
-    THREE_TOUCH("Oprimir 3 veces el botón de encendido", "three_touch");
+    TWO_TOUCH("Encender/Apagar el dispositivo 2 veces", "two_touch"),
+    THREE_TOUCH("Encender/Apagar el dispositivo 3 veces", "three_touch");
 
     override fun toString(): String = displayName
     fun getValue(): String = value

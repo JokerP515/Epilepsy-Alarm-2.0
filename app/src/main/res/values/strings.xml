@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Epilepsy Alarm 2.0</string>
-    <string name="registro_de_usuario">Registro de Usuario</string>
+    <string name="registro_de_usuario">Rellena Todos los Campos</string>
     <string name="nombre">Nombre</string>
     <string name="documento">Documento</string>
     <string name="apellido">Apellido</string>
@@ -20,7 +20,7 @@
     <string name="inicio">Inicio</string>
     <string name="explicacion_pantalla_configuracion">La sección “Configuración” permite configurar la alarma, desde la cantidad de veces que debe ser presionado el botón de encendido y apagado para que esta se active, hasta el tono de la alarma que va a sonar en caso de la activación de la misma</string>
     <string name="explicacion_pantalla_contactos">La sección “Contactos“ permite a los usuarios gestionar sus contactos de emergencia, agregar uno nuevo o modificarlo.</string>
-    <string name="contactos">Contactos</string>
+    <string name="contactos_de_emergencia">Contactos de Emergencia</string>
     <string name="configuracion">Configuración</string>
     <string name="explicacion_pantalla_mi_perfil">La sección “Mi Perfil”, brinda al usuario la posibilidad de cambiar datos personales y modificar estos</string>
     <string name="mi_perfil">Mi Perfil</string>
@@ -50,4 +50,15 @@
     <string name="metodo_de_activacion">Método de activación</string>
     <string name="selecciona_el_sonido_de_la_alarma">Selecciona el sonido de la alarma.</string>
     <string name="explicacion_activacion_alarma">Selecciona la cantidad de veces que deberás encender y apagar el dispositivo para la activación de la alarma.</string>
+    <string name="pasos_a_seguir_en_emergencia">Mantén la calma y quédate con la persona.\nAsegura el entorno.\nColócala de lado.\nNo restrinjas ni pongas nada en su boca.\nMide el tiempo.\nTras la convulsión, tranquilízala y ayúdala a reorientarse.</string>
+    <string name="detener_alarma">Detener Alarma</string>
+    <string name="cancelar_alarma">Cancelar Alarma</string>
+    <string name="quedan">Quedan</string>
+    <string name="segundos_activando_alarma">Segundos activando alarma.</string>
+    <string name="explicacion_registro_usuario">La información brindada permitirá saber los datos del usuario al momento de sufrir el ataque epiléptico.</string>
+    <string name="nuevo_contacto_emergencia">Añadir Contactos de Emergencia</string>
+    <string name="nombre_del_contacto_de_emergencia">Nombre del Contacto de Emergencia</string>
+    <string name="numero_del_contacto_de_emergencia">Número del Contacto de Emergencia</string>
+    <string name="instrucciones_o_datos_adicionales_del_usuario">Instrucciones o datos adicionales del usuario:</string>
+    <string name="contacto_de_emergencia">Contacto de Emergencia</string>
 </resources>

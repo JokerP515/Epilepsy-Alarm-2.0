@@ -13,15 +13,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.uan.epilepsyalarm20.data.service.EmergencyService
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.ui.navigation.AppNavigation
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
-import com.uan.epilepsyalarm20.ui.theme.EpilepsyAlarm20Theme
 import com.uan.epilepsyalarm20.ui.screens.LoadingScreen
+import com.uan.epilepsyalarm20.ui.theme.EpilepsyAlarm20Theme
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -35,9 +35,29 @@ class MainActivity : ComponentActivity() {
         android.Manifest.permission.CAMERA
     )
 
+//    @Inject
+//    lateinit var preferencesManager: PreferencesManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+//        // Verificar si fue abierto desde el launcher
+//        val launchedFromLauncher = intent?.action == Intent.ACTION_MAIN &&
+//                intent?.categories?.contains(Intent.CATEGORY_LAUNCHER) == true
+//
+//        if (launchedFromLauncher) {
+//            if (preferencesManager.isEmergencyActive()) {
+//                // Redirigir a EmergencyActivity
+//                val intent = Intent(this, EmergencyActivity::class.java).apply {
+//                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                }
+//                startActivity(intent)
+//                return // Evita seguir cargando MainActivity
+//            } else {
+//                preferencesManager.setEmergencyActive(false)
+//            }
+//        }
 
         setContent {
             EpilepsyAlarm20Theme {
@@ -61,9 +81,9 @@ class MainActivity : ComponentActivity() {
                 // Para activar el servicio de emergencia cuando se completa la configuración inicial
                 // Verifica permisos necesarios para la emergencia
                 LaunchedEffect(mainViewModel.initialConfigCompleted) {
-                    requestPermissions()
                     mainViewModel.initialConfigCompleted.collect { isCompleted ->
                         if (isCompleted) {
+                            requestPermissions()
                             val intent = Intent(this@MainActivity, EmergencyService::class.java)
                             startService(intent)
                             Toast.makeText(this@MainActivity, "Servicio de emergencia iniciado", Toast.LENGTH_LONG).show()

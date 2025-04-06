@@ -1,4 +1,4 @@
-package com.uan.epilepsyalarm20.ui.screens.mainMenu
+package com.uan.epilepsyalarm20.ui.screens.menu
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -49,10 +49,6 @@ fun InformationScreen() {
         HeadlineCard(
             title = stringResource(R.string.mi_perfil),
             description = stringResource(R.string.explicacion_pantalla_mi_perfil)
-        )
-        HeadlineCard(
-            title = stringResource(R.string.contactos),
-            description = stringResource(R.string.explicacion_pantalla_contactos)
         )
     }
 }

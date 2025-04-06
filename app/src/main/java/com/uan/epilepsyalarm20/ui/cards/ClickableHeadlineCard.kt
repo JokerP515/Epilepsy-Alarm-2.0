@@ -1,5 +1,6 @@
 package com.uan.epilepsyalarm20.ui.cards
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,11 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HeadlineCard(title: String, description: String? = null) {
+fun ClickableHeadlineCard(title: String, description: String? = null, onClick: () -> Unit) {
     OutlinedCard (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp),
+            .padding(4.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(0.dp),
     ) {
         Row(

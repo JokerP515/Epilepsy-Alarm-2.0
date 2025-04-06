@@ -6,10 +6,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -26,13 +26,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ActivationMethodScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ContactsScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ExplicationScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.InformationScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.RegisterScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.SoundSelectScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.StartScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ActivationMethodScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ConfigurationScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ContactsScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ExplicationScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.InformationScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.NewContactScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.RegisterScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.SoundSelectScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.StartScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +42,7 @@ fun MainMenuNavigation(navController: NavHostController) {
     val items = listOf(
         Routes.Inicio to Icons.Default.Home,
         Routes.PerfilUsuario to Icons.Default.Person,
-        Routes.Contactos to Icons.Default.Phone,
-        Routes.ConfigAlarma to Icons.Default.Settings,
+        Routes.Config to Icons.Default.Settings,
         Routes.Informacion to Icons.Default.Info
     )
 
@@ -49,7 +50,10 @@ fun MainMenuNavigation(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.epilepsy_alarm)) },
-                colors = TopAppBarDefaults.topAppBarColors()
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             )
         },
         bottomBar = {
@@ -84,7 +88,9 @@ fun MainMenuNavigation(navController: NavHostController) {
                 composable(Routes.Inicio.id) { StartScreen(hiltViewModel(), navController) }
                 composable(Routes.PerfilUsuario.id) { RegisterScreen(hiltViewModel(), {}, navController, true) }
                 composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(), navController) }
+                composable(Routes.NuevoContacto.id) { NewContactScreen(hiltViewModel(), navController) }
                 composable(Routes.Informacion.id) { InformationScreen() }
+                composable(Routes.Config.id) { ConfigurationScreen(navController) }
                 composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController, {}, true) }
                 composable(Routes.ConfigActivacionAlarma.id) {
                     ActivationMethodScreen(

@@ -30,6 +30,8 @@ class EmergencyService : Service() {
     private var lastPowerPressTime = 0L
 
     private var _emergencyMethod = "two_touch"
+    private var _maxTime = 2500L
+    private var _buttonPressCount = 2
 
     override fun onCreate() {
         super.onCreate()
@@ -42,6 +44,16 @@ class EmergencyService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             preferencesManager.emergencyMethodFlow.collect { newMethod ->
                 _emergencyMethod = newMethod
+                _maxTime = when (_emergencyMethod){
+                    "two_touch" -> 2500L
+                    "three_touch" -> 4000L
+                    else -> 2500L
+                }
+                _buttonPressCount = when(_emergencyMethod){
+                    "two_touch" -> 2
+                    "three_touch" -> 3
+                    else -> 2
+                }
             }
         }
     }
@@ -52,25 +64,20 @@ class EmergencyService : Service() {
         return START_STICKY
     }
 
-
     //Detecta el encendido/apagado del dispositivo en una ventana de tiempo determinada (5 segundos)
     private fun detectPowerButtonPress() {
         val currentTime = System.currentTimeMillis()
-        if (currentTime - lastPowerPressTime < 4000) {
+        if (currentTime - lastPowerPressTime < _maxTime) {
             powerButtonPressCount++
 
             // Depende de la configuración de emergencia del usuario si son 2 o 3 encendidos/apagados
-            if((_emergencyMethod == "two_touch" && powerButtonPressCount == 2)
-                || (_emergencyMethod == "three_touch" && powerButtonPressCount == 3)
-                ) {
-                powerButtonPressCount = 1
+            if(powerButtonPressCount == _buttonPressCount) {
+                powerButtonPressCount = 0
                 showEmergencyPopup()
             }
 
-            if((_emergencyMethod == "two_touch" && powerButtonPressCount > 2)
-                || (_emergencyMethod == "three_touch" && powerButtonPressCount > 3)
-            ) {
-                powerButtonPressCount = 1
+            if(powerButtonPressCount > _buttonPressCount) {
+                powerButtonPressCount = 0
             }
 
         } else {
@@ -107,6 +114,9 @@ class EmergencyService : Service() {
     private fun showEmergencyScreen(context: Context) {
         val intent = Intent(context, EmergencyActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            //preferencesManager.setEmergencyActive(true)
         }
         context.startActivity(intent)
     }

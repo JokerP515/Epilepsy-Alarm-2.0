@@ -2,6 +2,7 @@ package com.uan.epilepsyalarm20.ui.cards
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
@@ -33,6 +34,7 @@ fun ContactDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(if (isEditing) stringResource(R.string.editar_contacto) else stringResource(R.string.agregar_contacto)) },
+        shape = RoundedCornerShape(0.dp),
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(

@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.navigation.common)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.ui.text.google.fonts)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.room.ktx)

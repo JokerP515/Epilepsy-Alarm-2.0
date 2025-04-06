@@ -33,4 +33,5 @@ class MainViewModel @Inject constructor(
     fun setInitialConfigCompleted() {
         preferencesManager.setInitialConfigCompleted(true)
     }
+
 }

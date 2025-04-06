@@ -1,4 +1,4 @@
-package com.uan.epilepsyalarm20.ui.screens.mainMenu
+package com.uan.epilepsyalarm20.ui.screens.menu
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
@@ -44,6 +42,7 @@ import com.uan.epilepsyalarm20.domain.models.BloodType.Companion.toBloodType
 import com.uan.epilepsyalarm20.domain.models.DocumentType
 import com.uan.epilepsyalarm20.domain.models.DocumentType.Companion.toDocumentType
 import com.uan.epilepsyalarm20.domain.models.RegisterViewModel
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
@@ -111,13 +110,18 @@ fun RegisterScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
-                if(!boolean) Modifier.padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
+                if (!boolean) Modifier.padding(
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+                )
                 else Modifier
             ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        HeadlineCard(title = stringResource(R.string.registro_de_usuario))
+        HeadlineCard(
+            title = stringResource(R.string.registro_de_usuario),
+            description = stringResource(R.string.explicacion_registro_usuario)
+        )
 
         OutlinedTextField(
             value = viewModel.name,
@@ -167,40 +171,30 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                val missingFields = checkMissingFields(
-                    viewModel.name,
-                    viewModel.lastName,
-                    selectedDocumentType,
-                    documentInput,
-                    selectedBloodType
-                )
-                if (missingFields.isEmpty()) {
-                    viewModel.document = documentInput
-                    viewModel.documentType = selectedDocumentType.toString()
-                    viewModel.bloodType = selectedBloodType.toString()
-                    viewModel.saveUser()
-                    errorMessages = emptyList()
-                    showDialog = false
-                    if(!boolean){
-                        go(Routes.ConfigAlarma)
-                    } else showSuccessMessage = true
-                } else {
-                    errorMessages = missingFields
-                    showDialog = true
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            )
+        CustomButton(
+            text = if(!boolean) stringResource(R.string.siguiente) else stringResource(R.string.guardar),
         ) {
-            Text(
-                text = stringResource(R.string.guardar),
-                style = MaterialTheme.typography.bodyLarge
+            val missingFields = checkMissingFields(
+                viewModel.name,
+                viewModel.lastName,
+                selectedDocumentType,
+                documentInput,
+                selectedBloodType
             )
+            if (missingFields.isEmpty()) {
+                viewModel.document = documentInput
+                viewModel.documentType = selectedDocumentType.toString()
+                viewModel.bloodType = selectedBloodType.toString()
+                viewModel.saveUser()
+                errorMessages = emptyList()
+                showDialog = false
+                if(!boolean){
+                    go(Routes.ConfigAlarma)
+                } else showSuccessMessage = true
+            } else {
+                errorMessages = missingFields
+                showDialog = true
+            }
         }
     }
 

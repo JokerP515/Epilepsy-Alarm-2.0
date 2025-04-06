@@ -63,10 +63,6 @@ class PreferencesManager @Inject constructor(
         return sharedPreferences.getInt("contact_count", 0) // Clave corregida
     }
 
-//    fun getContactLimit(): Int {
-//        return sharedPreferences.getInt("contact_limit", 5) // Valor por defecto
-//    }
-
     // Para tener en cuenta si hay o no contactos de emergencia
     fun saveIsAnyContact() {
         sharedPreferences.edit { putBoolean("there_any_contacts", true) }
@@ -77,6 +73,4 @@ class PreferencesManager @Inject constructor(
     fun getIsAnyContact() : Boolean {
         return sharedPreferences.getBoolean("there_any_contacts", false)
     }
-
-
 }
