@@ -86,7 +86,11 @@ fun MainMenuNavigation(navController: NavHostController) {
                 startDestination = Routes.Informacion.id
             ) {
                 composable(Routes.Inicio.id) { StartScreen(hiltViewModel(), navController) }
-                composable(Routes.PerfilUsuario.id) { RegisterScreen(hiltViewModel(), {}, navController, true) }
+                composable(Routes.PerfilUsuario.id) { RegisterScreen(
+                    registerViewModel = hiltViewModel(),
+                    navController = navController,
+                    boolean = true
+                ) }
                 composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(), navController) }
                 composable(Routes.NuevoContacto.id) { NewContactScreen(hiltViewModel(), navController) }
                 composable(Routes.Informacion.id) { InformationScreen() }

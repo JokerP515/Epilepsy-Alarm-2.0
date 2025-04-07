@@ -58,7 +58,10 @@ fun InitialNotificationScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
-            .padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()),
+            .padding(
+                top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+            ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

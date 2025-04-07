@@ -14,8 +14,10 @@ import javax.inject.Inject
 class SmsSender @Inject constructor(
     @ApplicationContext private val context: Context) {
 
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    @RequiresPermission(allOf = [Manifest.permission.READ_PHONE_STATE, Manifest.permission.SEND_SMS])
     fun sendSms(phoneNumber: String, message: String, location: String) {
+        val completeMessage = message + "\n" + location
+
         val subscriptionManager = context.getSystemService(SubscriptionManager::class.java)
         val activeSubscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
 
@@ -44,9 +46,10 @@ class SmsSender @Inject constructor(
             // Obtener el SmsManager correcto
             val smsManager = context.getSystemService(SmsManager::class.java)!!.createForSubscriptionId(subscriptionId)
 
+            val dividedMessage = smsManager.divideMessage(completeMessage)
+
             // Enviar el mensaje de texto
-            smsManager.sendTextMessage(phoneNumber, null, message, null, null)
-            smsManager.sendTextMessage(phoneNumber, null, location, null, null)
+            smsManager.sendMultipartTextMessage(phoneNumber, null, dividedMessage, null, null)
 
             Toast.makeText(context, "Mensaje enviado", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {

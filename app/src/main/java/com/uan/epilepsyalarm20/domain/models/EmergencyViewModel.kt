@@ -17,7 +17,6 @@ import com.uan.epilepsyalarm20.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,6 +64,8 @@ class EmergencyViewModel @Inject constructor(
     private val _exitEmergencyScreen = MutableSharedFlow<Unit>()
     val exitEmergencyScreen: SharedFlow<Unit> = _exitEmergencyScreen.asSharedFlow()
 
+    private val _preparedMessages = MutableSharedFlow<List<Triple<String, String, String>>>()
+    val preparedMessages: SharedFlow<List<Triple<String, String, String>>> = _preparedMessages.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -101,7 +102,7 @@ class EmergencyViewModel @Inject constructor(
         _isEmergencyActive.value = false
 
         viewModelScope.launch {
-            for (i in 5 downTo 1) {
+            for (i in 5 downTo 0) {
                 delay(1000L)
                 if (_isCancelled.value) {
                     _countdown.value = 5
@@ -129,19 +130,19 @@ class EmergencyViewModel @Inject constructor(
     }
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    private suspend fun fetchLocation(): String {
+    private suspend fun fetchLocation(): String? {
         return withTimeoutOrNull(5000) {
             suspendCoroutine  { continuation ->
                 locationManager.getCurrentLocation { link ->
                     continuation.resume(link)
                 }
             }
-        } ?: "Ubicación no disponible"
+        }
     }
 
 
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
-    private fun sendMessage(phoneNumber: String, emergencyMessage: String, location: String) {
+    @RequiresPermission(allOf = [Manifest.permission.READ_PHONE_STATE, Manifest.permission.SEND_SMS])
+    fun sendPreparedMessage(phoneNumber: String, emergencyMessage: String, location: String) {
         messageRepository.sendSms("+57$phoneNumber", emergencyMessage, location)
     }
 
@@ -154,23 +155,27 @@ class EmergencyViewModel @Inject constructor(
         val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
 
         viewModelScope.launch {
-            val locationDeferred = async  { fetchLocation() }
-            val location = locationDeferred.await()
+            val location = fetchLocation()
             _mapsLink.value = location
             val userEntity = user.value
             val contacts = emergencyContacts.value
             _isEmergencyActive.value = true
-            if (userEntity != null && _isAnyEmergencyContact.value) {
-                val message = userEntity.mensajeEmergencia
-                contacts.forEach { contact ->
-                    sendMessage(contact.phoneNumber, message ?: "Ayuda, tengo una emergencia", location)
+
+            if (userEntity != null && _isAnyEmergencyContact.value && location != null) {
+                val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia"
+
+                val messageList = contacts.map { contact ->
+                    Triple(contact.phoneNumber, message, location)
                 }
+
+                _preparedMessages.emit(messageList) // Se prepara para el envío de mensajes
             }
         }
 
         audioPlayer.playAudio(soundFile, true)
         startTorchFlashing()
     }
+
 
     // Encender y apagar la linterna constantemente
     private fun startTorchFlashing() {

@@ -28,7 +28,11 @@ fun NavGraphBuilder.appGraph(
         }
 
         composable<Routes.PerfilUsuario> {
-            RegisterScreen(hiltViewModel(), go)
+            RegisterScreen(
+                registerViewModel = hiltViewModel(),
+                contactsViewModel = hiltViewModel(),
+                go = go
+            )
         }
 
         // La información de activación de la alarma

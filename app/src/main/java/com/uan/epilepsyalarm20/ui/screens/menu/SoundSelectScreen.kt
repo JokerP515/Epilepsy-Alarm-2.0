@@ -88,9 +88,13 @@ fun SoundSelectScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
-                if (!boolean) Modifier.padding(
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
-                )
+                if (!boolean) {
+                    Modifier
+                        .padding(
+                            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                            bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+                        )
+                }
                 else Modifier
             ),
         verticalArrangement = Arrangement.spacedBy(16.dp),

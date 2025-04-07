@@ -52,7 +52,13 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
-                if(!boolean) Modifier.padding(top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding())
+                if (!boolean) {
+                    Modifier
+                        .padding(
+                            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                            bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+                        )
+                }
                 else Modifier
             ),
         verticalArrangement = Arrangement.spacedBy(31.dp),

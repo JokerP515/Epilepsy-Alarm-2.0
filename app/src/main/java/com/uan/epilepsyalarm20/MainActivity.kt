@@ -35,29 +35,9 @@ class MainActivity : ComponentActivity() {
         android.Manifest.permission.CAMERA
     )
 
-//    @Inject
-//    lateinit var preferencesManager: PreferencesManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-//        // Verificar si fue abierto desde el launcher
-//        val launchedFromLauncher = intent?.action == Intent.ACTION_MAIN &&
-//                intent?.categories?.contains(Intent.CATEGORY_LAUNCHER) == true
-//
-//        if (launchedFromLauncher) {
-//            if (preferencesManager.isEmergencyActive()) {
-//                // Redirigir a EmergencyActivity
-//                val intent = Intent(this, EmergencyActivity::class.java).apply {
-//                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                }
-//                startActivity(intent)
-//                return // Evita seguir cargando MainActivity
-//            } else {
-//                preferencesManager.setEmergencyActive(false)
-//            }
-//        }
 
         setContent {
             EpilepsyAlarm20Theme {

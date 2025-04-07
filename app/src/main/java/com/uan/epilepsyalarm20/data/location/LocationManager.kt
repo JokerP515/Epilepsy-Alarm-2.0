@@ -39,5 +39,5 @@ class LocationManager @Inject constructor(
     }
 
     private fun createGoogleMapsLink(latitude: Double, longitude: Double): String =
-        "Mi ubicación: maps.google.com/?q=$latitude,$longitude"
+        "https://maps.google.com/maps?f=q&q=($latitude,$longitude)"
 }

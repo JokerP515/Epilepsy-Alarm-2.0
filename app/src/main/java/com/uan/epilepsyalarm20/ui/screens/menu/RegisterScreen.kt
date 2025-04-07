@@ -39,6 +39,7 @@ import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.UserEntity
 import com.uan.epilepsyalarm20.domain.models.BloodType
 import com.uan.epilepsyalarm20.domain.models.BloodType.Companion.toBloodType
+import com.uan.epilepsyalarm20.domain.models.ContactsViewModel
 import com.uan.epilepsyalarm20.domain.models.DocumentType
 import com.uan.epilepsyalarm20.domain.models.DocumentType.Companion.toDocumentType
 import com.uan.epilepsyalarm20.domain.models.RegisterViewModel
@@ -52,7 +53,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
-    viewModel: RegisterViewModel,
+    registerViewModel: RegisterViewModel,
+    contactsViewModel: ContactsViewModel? = null,
     go: (Any) -> Unit = {},
     navController: NavHostController? = null,
     boolean: Boolean = false
@@ -77,6 +79,9 @@ fun RegisterScreen(
     val bloodTypes = BloodType.entries
     var selectedBloodType by rememberSaveable { mutableStateOf(bloodTypes.first()) }
 
+    var contactName by rememberSaveable { mutableStateOf("") }
+    var contactPhoneNumber by rememberSaveable { mutableStateOf("") }
+
     val snackbarHostState = remember { SnackbarHostState() }
     var showSuccessMessage by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -85,13 +90,13 @@ fun RegisterScreen(
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        user = viewModel.getUser()
+        user = registerViewModel.getUser()
         user?.let {
-            viewModel.name = it.nombre
-            viewModel.lastName = it.apellido
-            viewModel.bloodType = it.tipoDeSangre
-            viewModel.documentType = it.tipoDeDocumento
-            viewModel.document = it.numeroDeDocumento
+            registerViewModel.name = it.nombre
+            registerViewModel.lastName = it.apellido
+            registerViewModel.bloodType = it.tipoDeSangre
+            registerViewModel.documentType = it.tipoDeDocumento
+            registerViewModel.document = it.numeroDeDocumento
             documentInput = it.numeroDeDocumento
 
             selectedDocumentType = toDocumentType(it.tipoDeDocumento)
@@ -110,9 +115,13 @@ fun RegisterScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
-                if (!boolean) Modifier.padding(
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
-                )
+                if (!boolean) {
+                    Modifier
+                        .padding(
+                            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                            bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+                        )
+                }
                 else Modifier
             ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -124,15 +133,15 @@ fun RegisterScreen(
         )
 
         OutlinedTextField(
-            value = viewModel.name,
-            onValueChange = { viewModel.name = it },
+            value = registerViewModel.name,
+            onValueChange = { registerViewModel.name = it },
             label = { Text(stringResource(R.string.nombre)) },
             modifier = Modifier.fillMaxWidth(),
             colors = textFieldColors()
         )
         OutlinedTextField(
-            value = viewModel.lastName ,
-            onValueChange = { viewModel.lastName = it },
+            value = registerViewModel.lastName ,
+            onValueChange = { registerViewModel.lastName = it },
             label = { Text(stringResource(R.string.apellido)) },
             modifier = Modifier.fillMaxWidth(),
             colors = textFieldColors()
@@ -148,7 +157,7 @@ fun RegisterScreen(
         )
 
         OutlinedTextField(
-            value = documentInput, //viewModel.document
+            value = documentInput, //registerViewModel.document
             onValueChange = { input ->
                 if (input.all { char -> char.isDigit() }) {
                     documentInput = input
@@ -169,30 +178,68 @@ fun RegisterScreen(
             onOptionSelected = { selectedBloodType = it }
         )
 
+        if(!boolean && contactsViewModel != null) {
+            OutlinedTextField(
+                value = contactName,
+                onValueChange = { contactName = it },
+                label = { Text(stringResource(R.string.nombre_del_contacto_de_emergencia)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = textFieldColors()
+            )
+
+            OutlinedTextField(
+                value = contactPhoneNumber,
+                onValueChange = { input ->
+                    if (input.all { char -> char.isDigit() }) {
+                        contactPhoneNumber = input
+                    }
+                },
+                label = { Text(stringResource(R.string.numero_del_contacto_de_emergencia)) },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = textFieldColors()
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomButton(
             text = if(!boolean) stringResource(R.string.siguiente) else stringResource(R.string.guardar),
         ) {
             val missingFields = checkMissingFields(
-                viewModel.name,
-                viewModel.lastName,
+                registerViewModel.name,
+                registerViewModel.lastName,
                 selectedDocumentType,
                 documentInput,
                 selectedBloodType
             )
-            if (missingFields.isEmpty()) {
-                viewModel.document = documentInput
-                viewModel.documentType = selectedDocumentType.toString()
-                viewModel.bloodType = selectedBloodType.toString()
-                viewModel.saveUser()
+
+            var missingFieldsContact = checkMissingFieldsContact(contactName, contactPhoneNumber)
+            if(boolean) missingFieldsContact = emptyList()
+
+            if (missingFields.isEmpty() && missingFieldsContact.isEmpty()) {
+                registerViewModel.document = documentInput
+                registerViewModel.documentType = selectedDocumentType.toString()
+                registerViewModel.bloodType = selectedBloodType.toString()
+
+                if(boolean) registerViewModel.updateUser()
+                else registerViewModel.saveUser()
+
+                if (!boolean && contactsViewModel != null && contactName.isNotBlank() && contactPhoneNumber.isNotBlank()) {
+                    contactsViewModel.insertEmergencyContact(contactName, contactPhoneNumber)
+                }
+
+                contactName = ""
+                contactPhoneNumber = ""
+
                 errorMessages = emptyList()
                 showDialog = false
+
                 if(!boolean){
                     go(Routes.ConfigAlarma)
                 } else showSuccessMessage = true
             } else {
-                errorMessages = missingFields
+                errorMessages = missingFields + missingFieldsContact
                 showDialog = true
             }
         }
@@ -225,5 +272,12 @@ fun checkMissingFields(
     if (documentType == DocumentType.SELECTOPTION) missing.add("Tipo de Documento")
     if (document.isBlank()) missing.add("Número de documento")
     if (bloodType == BloodType.SELECTOPTION) missing.add("Tipo de Sangre")
+    return missing
+}
+
+fun checkMissingFieldsContact (name: String, phoneNumber: String): List<String> {
+    val missing = mutableListOf<String>()
+    if(name.isBlank()) missing.add("Nombre del Contacto de Emergencia")
+    if(phoneNumber.isBlank()) missing.add("Número del Contacto de Emergencia")
     return missing
 }
