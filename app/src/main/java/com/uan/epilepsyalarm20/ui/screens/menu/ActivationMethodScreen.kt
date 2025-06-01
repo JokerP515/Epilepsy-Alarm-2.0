@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,6 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
@@ -84,14 +87,29 @@ fun ActivationMethodScreen(
             title = stringResource(R.string.configura_la_alarma)
         )
 
-        Text(
-            text = stringResource(R.string.explicacion_activacion_alarma),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground
+        BasicText(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("Selecciona la ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    append("cantidad de veces")
+                }
+                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append(" que deberás presionar el botón de encendido y apagado para la activación de la alarma.")
+                }
+            },
+            style = MaterialTheme.typography.titleLarge
         )
 
+//        Text(
+//            text = stringResource(R.string.explicacion_activacion_alarma),
+//            style = MaterialTheme.typography.titleLarge,
+//            color = MaterialTheme.colorScheme.onBackground
+//        )
+
         Image(
-            painter = painterResource(R.drawable.recurso1_2),
+            painter = painterResource(R.drawable.phone),
             contentDescription = "Dispositivo Activación",
             modifier = Modifier.size(imageSize())
         )

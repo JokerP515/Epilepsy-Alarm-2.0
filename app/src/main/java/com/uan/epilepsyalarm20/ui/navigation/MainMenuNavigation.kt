@@ -3,10 +3,10 @@ package com.uan.epilepsyalarm20.ui.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,10 +40,10 @@ import com.uan.epilepsyalarm20.ui.screens.menu.StartScreen
 @Composable
 fun MainMenuNavigation(navController: NavHostController) {
     val items = listOf(
-        Routes.Inicio to Icons.Default.Home,
-        Routes.PerfilUsuario to Icons.Default.Person,
-        Routes.Config to Icons.Default.Settings,
-        Routes.Informacion to Icons.Default.Info
+        Routes.Inicio to Icons.Outlined.Home,
+        Routes.Config to Icons.Outlined.Settings,
+        Routes.PerfilUsuario to Icons.Outlined.Person,
+        Routes.Informacion to Icons.Outlined.Info
     )
 
     Scaffold(

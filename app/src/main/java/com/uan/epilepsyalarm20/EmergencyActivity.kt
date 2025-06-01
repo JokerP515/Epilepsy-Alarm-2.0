@@ -27,7 +27,9 @@ class EmergencyActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Configuración de la pantalla para que aparezca sobre la pantalla de bloqueo
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        )
         setShowWhenLocked(true)
         setTurnScreenOn(true)
 

@@ -10,9 +10,9 @@ sealed class Routes(val id: String) {
     @Serializable
     data object Inicio : Routes("Inicio")
     @Serializable
-    data object PerfilUsuario : Routes("Perfil")
+    data object PerfilUsuario : Routes("Mi perfil")
     @Serializable
-    data object Config : Routes("Config")
+    data object Config : Routes("Config.")
     @Serializable
     data object ConfigAlarma : Routes("Config_alarma")
     @Serializable

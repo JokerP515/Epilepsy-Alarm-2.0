@@ -119,10 +119,10 @@ fun RegisterScreen(
                     Modifier
                         .padding(
                             top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
-                            bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+                            bottom = WindowInsets.systemBars.asPaddingValues()
+                                .calculateBottomPadding()
                         )
-                }
-                else Modifier
+                } else Modifier
             ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -204,7 +204,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomButton(
-            text = if(!boolean) stringResource(R.string.siguiente) else stringResource(R.string.guardar),
+            text = if(!boolean) stringResource(R.string.continuar) else stringResource(R.string.guardar),
         ) {
             val missingFields = checkMissingFields(
                 registerViewModel.name,

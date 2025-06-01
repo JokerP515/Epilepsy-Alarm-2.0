@@ -1,9 +1,13 @@
 package com.uan.epilepsyalarm20
 
+import android.accessibilityservice.AccessibilityService
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,13 +19,14 @@ import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.uan.epilepsyalarm20.data.service.EmergencyService
+import com.uan.epilepsyalarm20.data.service.VolumeButtonAccessibilityService
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.ui.navigation.AppNavigation
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.screens.LoadingScreen
 import com.uan.epilepsyalarm20.ui.theme.EpilepsyAlarm20Theme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -31,7 +36,6 @@ class MainActivity : ComponentActivity() {
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
         android.Manifest.permission.SEND_SMS,
         android.Manifest.permission.READ_PHONE_STATE,
-        android.Manifest.permission.WAKE_LOCK,
         android.Manifest.permission.CAMERA
     )
 
@@ -58,19 +62,53 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(startDestination = it)
                 } ?: LoadingScreen()
 
-                // Para activar el servicio de emergencia cuando se completa la configuración inicial
-                // Verifica permisos necesarios para la emergencia
+                // Maneja permisos y accesibilidad cuando la configuración inicial se completa
                 LaunchedEffect(mainViewModel.initialConfigCompleted) {
                     mainViewModel.initialConfigCompleted.collect { isCompleted ->
                         if (isCompleted) {
                             requestPermissions()
-                            val intent = Intent(this@MainActivity, EmergencyService::class.java)
-                            startService(intent)
-                            Toast.makeText(this@MainActivity, "Servicio de emergencia iniciado", Toast.LENGTH_LONG).show()
+                            // Verifica si el servicio de accesibilidad está activo
+                            if (!isAccessibilityServiceEnabled(VolumeButtonAccessibilityService::class.java)) {
+                                openAccessibilitySettingsForService(VolumeButtonAccessibilityService::class.java)
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Activa el servicio de accesibilidad para usar la alarma",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Servicio de accesibilidad ya activo",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    // Verifica si el servicio de accesibilidad está activo
+    private fun isAccessibilityServiceEnabled(service: Class<out AccessibilityService>): Boolean {
+        val am = getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val enabledServices = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+        val serviceName = ComponentName(this, service).flattenToString()
+        return enabledServices?.split(":")?.contains(serviceName) == true
+    }
+
+    // Lleva al usuario directo a la configuración específica de tu servicio
+    private fun openAccessibilitySettingsForService(service: Class<out AccessibilityService>) {
+        try {
+            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                data = "package:$packageName".toUri()
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            // Si falla, abre la pantalla general de accesibilidad como respaldo
+            Log.e("MainActivity", "Error al abrir configuración de accesibilidad", e)
+            val fallbackIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+            startActivity(fallbackIntent)
         }
     }
 
@@ -81,19 +119,17 @@ class MainActivity : ComponentActivity() {
             if (allGranted) {
                 Toast.makeText(this, "Todos los permisos concedidos", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Algunos permisos fueron denegados", Toast.LENGTH_SHORT).show()
                 requestPermissions()
             }
         }
 
-    // Solicita los permisos estándar y el permiso de superposición por separado
     private fun requestPermissions() {
         val missingPermissions = requiredPermission.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
 
         if (missingPermissions.isNotEmpty()) {
-            requestPermissionLauncher.launch(missingPermissions.toTypedArray()) // Solo pide los que faltan
+            requestPermissionLauncher.launch(missingPermissions.toTypedArray())
         } else {
             Toast.makeText(this, "Permisos estándar ya concedidos", Toast.LENGTH_SHORT).show()
         }
@@ -104,7 +140,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Abre la configuración para `SYSTEM_ALERT_WINDOW`
     private fun requestOverlayPermission() {
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -112,4 +147,5 @@ class MainActivity : ComponentActivity() {
         )
         startActivity(intent)
     }
+
 }

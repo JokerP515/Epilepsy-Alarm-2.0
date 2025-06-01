@@ -2,6 +2,7 @@ package com.uan.epilepsyalarm20.ui.screens.emergency
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
@@ -51,111 +53,118 @@ fun EmergencyContent(
 
         Text(
             text = "Mantén la calma y quédate con la persona.",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleLarge.copy(
+                textDecoration = TextDecoration.Underline
+            ),
+            color = MaterialTheme.colorScheme.primaryContainer,
         )
 
         Text(
             text = "Asegura el entorno",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleLarge.copy(
+                textDecoration = TextDecoration.Underline
+            ),
+            color = MaterialTheme.colorScheme.primaryContainer,
         )
 
         Text(
-            text = "Colócala de lado.",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            text = "Colócala de lado",
+            style = MaterialTheme.typography.titleLarge.copy(
+                textDecoration = TextDecoration.Underline
+            ),
+            color = MaterialTheme.colorScheme.primaryContainer,
         )
 
         Text(
-            text = "No restrinjas ni pongas nada en su boca.",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            text = "No restrinjas ni pongas nada en su boca",
+            style = MaterialTheme.typography.titleLarge.copy(
+                textDecoration = TextDecoration.Underline
+            ),
+            color = MaterialTheme.colorScheme.primaryContainer,
         )
 
         Text(
-            text = "Mide el tiempo.",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            text = "Mide el tiempo",
+            style = MaterialTheme.typography.titleLarge.copy(
+                textDecoration = TextDecoration.Underline
+            ),
+            color = MaterialTheme.colorScheme.primaryContainer,
         )
 
         Text(
             text = "Tras la convulsión, tranquilízala y ayúdala a reorientarse.",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleLarge.copy(
+                textDecoration = TextDecoration.Underline
+            ),
+            color = MaterialTheme.colorScheme.primaryContainer,
         )
 
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.primaryContainer,
             thickness = 5.dp
         )
 
         Text(
             text = "Nombre: ${user.nombre}",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primaryContainer
         )
 
         Text(
             text = "Documento: ${user.numeroDeDocumento}",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primaryContainer
         )
 
         Text(
             text = "Tipo de Sangre: ${user.tipoDeSangre}",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primaryContainer
         )
 
         firstEmergencyContact?.let {
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.onBackground,
-                thickness = 5.dp
-            )
-
             Text(
                 text = stringResource(R.string.contacto_de_emergencia),
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primaryContainer
             )
             Text(
                 text = "Nombre: ${it.name}",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primaryContainer
             )
             Text(
                 text = "Teléfono: ${it.phoneNumber}",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primaryContainer
             )
         }
 
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.primaryContainer,
             thickness = 5.dp
         )
 
         userInstructions?.let {
             OutlinedCard (
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Column (
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.instrucciones_o_datos_adicionales_del_usuario),
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onBackground
+                        text = stringResource(R.string.mensaje_personalizado),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primaryContainer
                     )
                     Text(
                         text = it,
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.onBackground
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primaryContainer
                     )
                 }
             }

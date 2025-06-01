@@ -154,21 +154,23 @@ class EmergencyViewModel @Inject constructor(
     fun onActivateEmergency() {
         val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
 
-        viewModelScope.launch {
-            val location = fetchLocation()
-            _mapsLink.value = location
-            val userEntity = user.value
-            val contacts = emergencyContacts.value
-            _isEmergencyActive.value = true
+        if(_isAnyEmergencyContact.value) { // Verifica si hay contactos de emergencia y procede con el envío del mensaje
+            viewModelScope.launch {
+                val location = fetchLocation()
+                _mapsLink.value = location
+                val userEntity = user.value
+                val contacts = emergencyContacts.value
+                _isEmergencyActive.value = true
 
-            if (userEntity != null && _isAnyEmergencyContact.value && location != null) {
-                val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia"
+                if (userEntity != null && location != null) {
+                    val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia."
 
-                val messageList = contacts.map { contact ->
-                    Triple(contact.phoneNumber, message, location)
+                    val messageList = contacts.map { contact ->
+                        Triple(contact.phoneNumber, message, location)
+                    }
+
+                    _preparedMessages.emit(messageList) // Se prepara para el envío de mensajes
                 }
-
-                _preparedMessages.emit(messageList) // Se prepara para el envío de mensajes
             }
         }
 

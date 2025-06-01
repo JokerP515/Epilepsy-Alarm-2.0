@@ -14,11 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,13 +32,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
-import com.uan.epilepsyalarm20.domain.models.Sounds
 import com.uan.epilepsyalarm20.domain.models.SoundSelectViewModel
+import com.uan.epilepsyalarm20.domain.models.Sounds
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
@@ -104,12 +107,35 @@ fun SoundSelectScreen(
             title = stringResource(R.string.configura_la_alarma),
         )
 
-        Text(
-            text = stringResource(R.string.selecciona_el_sonido_de_la_alarma),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center
+        BasicText(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("Selecciona el ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    append("sonido")
+                }
+                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append(" de la ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    append("alarma")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append(".")
+                }
+            },
+            style = MaterialTheme.typography.titleLarge.copy(
+                textAlign = TextAlign.Center
+            ),
         )
+
+//        Text(
+//            text = stringResource(R.string.selecciona_el_sonido_de_la_alarma),
+//            style = MaterialTheme.typography.titleLarge,
+//            color = MaterialTheme.colorScheme.onBackground,
+//            textAlign = TextAlign.Center
+//        )
 
         EnumDropdown(
             selectedOption=selectedSound,
@@ -128,12 +154,12 @@ fun SoundSelectScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Image(
-            painter = painterResource(R.drawable.seleccion_alarma_campana),
+            painter = painterResource(R.drawable.bell),
             contentDescription = stringResource(R.string.alarma),
             modifier = Modifier.size(imageSize())
         )
 
-        CustomButton (text = stringResource(R.string.guardar_y_finalizar)) {
+        CustomButton (text = stringResource(R.string.finalizar)) {
             if(isSoundSelected(selectedSound)){
                 soundSelectViewModel.saveSoundPreference(selectedSound.getFileName())
                 mainViewModel.setInitialConfigCompleted()
