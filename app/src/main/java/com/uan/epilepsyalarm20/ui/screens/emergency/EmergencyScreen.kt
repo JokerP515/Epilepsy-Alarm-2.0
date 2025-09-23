@@ -45,12 +45,6 @@ fun EmergencyScreen(
         }
         user = viewModel.getUser()
         firstEmergencyContact = viewModel.getFirstEmergencyContact()
-
-        viewModel.preparedMessages.collect { messageList ->
-            messageList.forEach { (phone, msg, loc) ->
-                viewModel.sendPreparedMessage(phone, msg, loc)
-            }
-        }
     }
 
     BackHandler {

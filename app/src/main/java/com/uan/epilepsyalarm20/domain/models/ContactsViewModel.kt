@@ -70,8 +70,3 @@ class ContactsViewModel @Inject constructor(
         }
     }
 }
-
-
-/*
-*
-* */

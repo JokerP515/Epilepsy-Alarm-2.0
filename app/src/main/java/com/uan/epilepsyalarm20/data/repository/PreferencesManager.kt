@@ -39,7 +39,7 @@ class PreferencesManager @Inject constructor(
         _emergencyMethodFlow.value = method
     }
     fun getEmergencyMethod(): String? {
-        return sharedPreferences.getString("emergency_method", "two_touch")
+        return sharedPreferences.getString("emergency_method", "long_press")
     }
     fun isEmergencyMethodSaved(): Boolean {
         return sharedPreferences.contains("emergency_method")

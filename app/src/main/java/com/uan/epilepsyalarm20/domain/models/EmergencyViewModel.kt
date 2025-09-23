@@ -64,9 +64,6 @@ class EmergencyViewModel @Inject constructor(
     private val _exitEmergencyScreen = MutableSharedFlow<Unit>()
     val exitEmergencyScreen: SharedFlow<Unit> = _exitEmergencyScreen.asSharedFlow()
 
-    private val _preparedMessages = MutableSharedFlow<List<Triple<String, String, String>>>()
-    val preparedMessages: SharedFlow<List<Triple<String, String, String>>> = _preparedMessages.asSharedFlow()
-
     init {
         viewModelScope.launch {
             launch {
@@ -94,6 +91,8 @@ class EmergencyViewModel @Inject constructor(
     @RequiresPermission(allOf = [
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.SEND_SMS,
         Manifest.permission.READ_PHONE_STATE
     ])
     fun startEmergencyCountdown() {
@@ -149,13 +148,16 @@ class EmergencyViewModel @Inject constructor(
     @RequiresPermission(allOf = [
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.SEND_SMS,
         Manifest.permission.READ_PHONE_STATE
     ])
     fun onActivateEmergency() {
         val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
 
-        if(_isAnyEmergencyContact.value) { // Verifica si hay contactos de emergencia y procede con el envío del mensaje
-            viewModelScope.launch {
+        viewModelScope.launch {
+            // Verifica si hay contactos de emergencia y procede con el envío del mensaje
+            if(_isAnyEmergencyContact.value) {
                 val location = fetchLocation()
                 _mapsLink.value = location
                 val userEntity = user.value
@@ -165,17 +167,14 @@ class EmergencyViewModel @Inject constructor(
                 if (userEntity != null && location != null) {
                     val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia."
 
-                    val messageList = contacts.map { contact ->
-                        Triple(contact.phoneNumber, message, location)
+                    contacts.map { contact ->
+                        sendPreparedMessage(contact.phoneNumber, message, location)
                     }
-
-                    _preparedMessages.emit(messageList) // Se prepara para el envío de mensajes
                 }
             }
+            audioPlayer.playAudio(soundFile, true)
+            startTorchFlashing()
         }
-
-        audioPlayer.playAudio(soundFile, true)
-        startTorchFlashing()
     }
 
 

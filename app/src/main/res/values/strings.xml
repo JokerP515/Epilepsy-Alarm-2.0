@@ -64,4 +64,5 @@
     <string name="iniciar">Iniciar</string>
     <string name="persona_ayudando">Persona ayudando</string>
     <string name="continuar">Continuar</string>
+    <string name="recordatorio_sms">Recuerda que, si no dispones de saldo, los mensajes SMS no podrán enviarse.</string>
 </resources>

@@ -26,7 +26,6 @@ import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.screens.LoadingScreen
 import com.uan.epilepsyalarm20.ui.theme.EpilepsyAlarm20Theme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.jvm.java
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

@@ -22,12 +22,12 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
     @Inject
     lateinit var preferencesManager: PreferencesManager
 
-    private var volumePressTimestamps = ArrayDeque<Long>()
+    //private var volumePressTimestamps = ArrayDeque<Long>()
 
     private var emergencyJob: Job? = null
     private var coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    private var _emergencyMethod: String = "two_touch"
+    private var _emergencyMethod: String = "long_press"
 
     private var _timeLimit: Long = 5000L
 
@@ -47,12 +47,12 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
                 when (event.action) {
                     KeyEvent.ACTION_DOWN -> {
                         when (_emergencyMethod) {
-                            "two_touch" -> {
-                                handleVolumeClick(2L)
-                            }
-                            "three_touch" -> {
-                                handleVolumeClick(3L)
-                            }
+//                            "two_touch" -> {
+//                                handleVolumeClick(2L)
+//                            }
+//                            "three_touch" -> {
+//                                handleVolumeClick(3L)
+//                            }
                             "long_press" -> {
                                 emergencyJob = coroutineScope.launch {
                                     delay(_timeLimit)
@@ -94,19 +94,19 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
     }
 
     // Para manejar 2 o 3 veces el botón de volumen
-    private fun handleVolumeClick(times: Long) {
-        val now = System.currentTimeMillis()
-
-        volumePressTimestamps.addLast(now)
-
-        // Vacía los timestamps que han pasado más de 5 segundos
-        while(volumePressTimestamps.isNotEmpty() && now - volumePressTimestamps.first() > _timeLimit) {
-            volumePressTimestamps.removeFirst()
-        }
-
-        if(volumePressTimestamps.size.toLong() == times) {
-            launchEmergencyActivity()
-            volumePressTimestamps.clear()
-        }
-    }
+//    private fun handleVolumeClick(times: Long) {
+//        val now = System.currentTimeMillis()
+//
+//        volumePressTimestamps.addLast(now)
+//
+//        // Vacía los timestamps que han pasado más de 5 segundos
+//        while(volumePressTimestamps.isNotEmpty() && now - volumePressTimestamps.first() > _timeLimit) {
+//            volumePressTimestamps.removeFirst()
+//        }
+//
+//        if(volumePressTimestamps.size.toLong() == times) {
+//            launchEmergencyActivity()
+//            volumePressTimestamps.clear()
+//        }
+//    }
 }

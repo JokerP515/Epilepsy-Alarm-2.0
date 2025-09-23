@@ -13,7 +13,6 @@
 
     <!--Para superposicion en pantalla de bloqueo y desbloqueo de pantalla (Emergencias)-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
 
     <!-- Para emergencias, usa solo el flash de la camara y cambia el nivel del audio al max-->
     <uses-permission android:name="android.permission.CAMERA" />

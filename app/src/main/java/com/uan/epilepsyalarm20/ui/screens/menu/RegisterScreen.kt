@@ -5,15 +5,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
@@ -46,6 +51,7 @@ import com.uan.epilepsyalarm20.domain.models.RegisterViewModel
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
+import com.uan.epilepsyalarm20.ui.cards.ReminderCard
 import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.textFieldColors
@@ -132,6 +138,12 @@ fun RegisterScreen(
             description = stringResource(R.string.explicacion_registro_usuario)
         )
 
+        if(!boolean) {
+            ReminderCard(
+                title = stringResource(R.string.recordatorio_sms)
+            )
+        }
+
         OutlinedTextField(
             value = registerViewModel.name,
             onValueChange = { registerViewModel.name = it },
@@ -179,6 +191,26 @@ fun RegisterScreen(
         )
 
         if(!boolean && contactsViewModel != null) {
+            BasicText(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                        append("Puedes agregar más ")
+                    }
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                        append("contactos de emergencia")
+                    }
+                    withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                        append(" desde la pestaña de ")
+                    }
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                        append("configuración.")
+                    }
+                },
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    textAlign = TextAlign.Center
+                )
+            )
+
             OutlinedTextField(
                 value = contactName,
                 onValueChange = { contactName = it },

@@ -7,4 +7,5 @@
     android:canRequestFilterKeyEvents="true"
     android:accessibilityFlags="flagRequestFilterKeyEvents"
     android:description="@string/Explicacion_Funcionamiento_EPAlarm"
+    android:isAccessibilityTool="false"
     />
