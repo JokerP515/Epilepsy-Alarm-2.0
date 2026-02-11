@@ -40,10 +40,10 @@ import com.uan.epilepsyalarm20.ui.screens.menu.StartScreen
 @Composable
 fun MainMenuNavigation(navController: NavHostController) {
     val items = listOf(
-        Routes.Inicio to Icons.Outlined.Home,
         Routes.Config to Icons.Outlined.Settings,
+        Routes.Inicio to Icons.Outlined.Home,
         Routes.PerfilUsuario to Icons.Outlined.Person,
-        Routes.Informacion to Icons.Outlined.Info
+        // Routes.Informacion to Icons.Outlined.Info
     )
 
     Scaffold(
@@ -83,7 +83,8 @@ fun MainMenuNavigation(navController: NavHostController) {
         Box (modifier = Modifier.padding(innerPadding)) {
             NavHost(
                 navController = navController,
-                startDestination = Routes.Informacion.id
+                // startDestination = Routes.Informacion.id
+                startDestination = Routes.Inicio.id
             ) {
                 composable(Routes.Inicio.id) { StartScreen(hiltViewModel(), navController) }
                 composable(Routes.PerfilUsuario.id) { RegisterScreen(
@@ -93,9 +94,9 @@ fun MainMenuNavigation(navController: NavHostController) {
                 ) }
                 composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(), navController) }
                 composable(Routes.NuevoContacto.id) { NewContactScreen(hiltViewModel(), navController) }
-                composable(Routes.Informacion.id) { InformationScreen() }
+                composable(Routes.Informacion.id) { InformationScreen(navController) }
                 composable(Routes.Config.id) { ConfigurationScreen(navController) }
-                composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController, {}, true) }
+                composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController=navController, boolean = true) }
                 composable(Routes.ConfigActivacionAlarma.id) {
                     ActivationMethodScreen(
                         hiltViewModel(),

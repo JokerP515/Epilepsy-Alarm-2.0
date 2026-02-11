@@ -136,7 +136,7 @@ class EmergencyViewModel @Inject constructor(
                     continuation.resume(link)
                 }
             }
-        }
+        } ?: "Ubicación no dispobible"
     }
 
 

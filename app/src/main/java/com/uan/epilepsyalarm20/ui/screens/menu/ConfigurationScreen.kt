@@ -42,5 +42,12 @@ fun ConfigurationScreen(navController: NavHostController) {
         ) {
             navController.navigate(Routes.Contactos.id)
         }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ClickableHeadlineCard(
+            title = stringResource(R.string.informacion_de_la_aplicacion),
+        ) {
+            navController.navigate(Routes.Informacion.id)
+        }
     }
 }

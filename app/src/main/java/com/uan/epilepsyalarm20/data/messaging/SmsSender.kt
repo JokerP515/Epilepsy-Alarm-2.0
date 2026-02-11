@@ -50,8 +50,8 @@ class SmsSender @Inject constructor(
 
             // Enviar el mensaje de texto
             smsManager.sendMultipartTextMessage(phoneNumber, null, dividedMessage, null, null)
-
             Toast.makeText(context, "Mensaje enviado", Toast.LENGTH_SHORT).show()
+
         } catch (e: Exception) {
             Log.e("SmsSender", "Error al enviar SMS: ${e.message}")
         }

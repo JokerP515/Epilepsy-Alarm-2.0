@@ -6,9 +6,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
@@ -16,7 +19,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,17 +41,37 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
+import com.uan.epilepsyalarm20.domain.models.StartViewModel
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
+import com.uan.epilepsyalarm20.ui.theme.textFieldColors
+import kotlinx.coroutines.launch
 
 @Composable
-fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Unit = {}, boolean: Boolean = false){
+fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Unit = {}, boolean: Boolean = false, viewModel: StartViewModel = hiltViewModel()){
 
     val context = LocalContext.current
+
+    var message by rememberSaveable { mutableStateOf("") }
+    var instructions by rememberSaveable { mutableStateOf("") }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showSuccessMessage by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        message = viewModel.getEmergencyMessage() ?: ""
+        instructions = viewModel.getEmergencyInstructions() ?: ""
+    }
+//
+//    Handler {
+//    navController.navigate(Routes.Informacion.id)
+//
 
     BackHandler {
         if(!boolean) {
@@ -72,26 +106,20 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             title = stringResource(R.string.configura_la_alarma)
         )
 
-        Image(
-            painter = painterResource(R.drawable.holding_phone),
-            contentDescription = "Sosteniendo teléfono",
-            modifier = Modifier.size(imageSize())
-        )
-
         BasicText(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
                     append("El botón de ")
                 }
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
-                    append("encendido")
+                    append("subir volumen")
                 }
-                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-                    append(" y ")
-                }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
-                    append("apagado")
-                }
+//                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+//                    append(" y ")
+//                }
+//                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+//                    append("apagado")
+//                }
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
                     append(", será el activador de la alarma.")
                 }
@@ -101,6 +129,12 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             ),
         )
 
+        Image(
+            painter = painterResource(R.drawable.holding_phone),
+            contentDescription = "Sosteniendo teléfono",
+            modifier = Modifier.size(imageSize())
+        )
+
 //        Text(
 //            text = stringResource(R.string.Mensaje_De_Explicacion),
 //            style = MaterialTheme.typography.titleLarge,
@@ -108,6 +142,61 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
 //            textAlign = TextAlign.Center
 //        )
 
+        BasicText(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("Escribe un ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    append("mensaje personalizado ")
+                }
+                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("que se enviará al activar la alarma e incluye ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    append("instrucciones ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("breves para el manejo de la crisis.")
+                }
+            },
+            style = MaterialTheme.typography.bodyLarge.copy(
+                textAlign = TextAlign.Center
+            ),
+        )
+
+        // Mensajes de configuración del mensaje
+        OutlinedTextField(
+            value = message,
+            onValueChange = { message = it},
+            label = { Text(stringResource(R.string.mensaje_de_alerta)) },
+            placeholder = { Text(text = stringResource(R.string.explicacion_mensaje_alerta)) },
+            colors = textFieldColors(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = instructions,
+            onValueChange = { instructions = it },
+            label = { Text(stringResource(R.string.instrucciones_o_datos_adicionales)) },
+            placeholder = { Text(text = stringResource(R.string.explicacion_instrucciones_o_datos_adicionales)) },
+            colors = textFieldColors(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        CustomButton(text = stringResource(R.string.guardar)) {
+            if(message.isNotEmpty()){
+                viewModel.updateEmergencyMessage(message)
+                showSuccessMessage = true
+
+                if(instructions.isNotEmpty()){
+                    viewModel.updateEmergencyInstructions(instructions)
+                    showSuccessMessage = true
+                }
+            }
+        }
+
+        // Botón siguiente
         CustomButton(text = stringResource(R.string.siguiente)) {
             if(navController != null) {
                 navController.navigate(Routes.ConfigActivacionAlarma.id)
@@ -116,4 +205,15 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             }
         }
     }
+
+    if (showSuccessMessage) {
+        LaunchedEffect(true) {
+            // Mostrar Snackbar utilizando SnackbarHostState
+            scope.launch {
+                snackbarHostState.showSnackbar("¡Información editada con éxito!")
+            }
+            showSuccessMessage = false // Ocultar el mensaje después de mostrarlo
+        }
+    }
+    SnackbarHost(hostState = snackbarHostState)
 }

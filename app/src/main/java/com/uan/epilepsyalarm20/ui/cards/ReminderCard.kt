@@ -12,12 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uan.epilepsyalarm20.ui.theme.reminderCardColors
 
 @Composable
-@Preview(showBackground = true)
 fun ReminderCard(title: String = "Reminder") {
     Card (
         modifier = Modifier

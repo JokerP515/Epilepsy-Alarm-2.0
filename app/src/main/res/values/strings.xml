@@ -65,4 +65,6 @@
     <string name="persona_ayudando">Persona ayudando</string>
     <string name="continuar">Continuar</string>
     <string name="recordatorio_sms">Recuerda que, si no dispones de saldo, los mensajes SMS no podrán enviarse.</string>
+    <string name="informacion_de_la_aplicacion">Información de la aplicación</string>
+    <string name="informacion_inicio_activacion">"Oprime el botón físico para enviar una alerta a tus contactos"</string>
 </resources>

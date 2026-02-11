@@ -16,18 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 
 @Composable
-fun InformationScreen() {
+fun InformationScreen(navController: NavHostController) {
 
     val context = LocalContext.current
 
     BackHandler {
-        val activity = context as? Activity
-        activity?.moveTaskToBack(true) // Mueve la app al fondo sin cerrarla
+        navController.navigateUp()
     }
+
 
     Column(
         modifier = Modifier

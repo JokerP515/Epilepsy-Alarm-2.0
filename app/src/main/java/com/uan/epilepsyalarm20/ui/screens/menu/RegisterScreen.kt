@@ -159,6 +159,15 @@ fun RegisterScreen(
             colors = textFieldColors()
         )
 
+        // Tipo de sangre
+        EnumDropdown(
+            selectedOption = selectedBloodType,
+            options = bloodTypes,
+            label = stringResource(R.string.tipo_de_sangre),
+            placeholder = stringResource(R.string.seleccionar_tipo_de_sangre),
+            onOptionSelected = { selectedBloodType = it }
+        )
+
         // Tipo de documento
         EnumDropdown(
             selectedOption = selectedDocumentType,
@@ -179,15 +188,6 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = textFieldColors()
-        )
-
-        // Tipo de sangre
-        EnumDropdown(
-            selectedOption = selectedBloodType,
-            options = bloodTypes,
-            label = stringResource(R.string.tipo_de_sangre),
-            placeholder = stringResource(R.string.seleccionar_tipo_de_sangre),
-            onOptionSelected = { selectedBloodType = it }
         )
 
         if(!boolean && contactsViewModel != null) {
