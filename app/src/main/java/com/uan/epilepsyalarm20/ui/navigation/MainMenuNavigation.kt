@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +25,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
-import com.uan.epilepsyalarm20.ui.screens.menu.ActivationMethodScreen
 import com.uan.epilepsyalarm20.ui.screens.menu.ConfigurationScreen
 import com.uan.epilepsyalarm20.ui.screens.menu.ContactsScreen
 import com.uan.epilepsyalarm20.ui.screens.menu.ExplicationScreen
@@ -86,7 +84,7 @@ fun MainMenuNavigation(navController: NavHostController) {
                 // startDestination = Routes.Informacion.id
                 startDestination = Routes.Inicio.id
             ) {
-                composable(Routes.Inicio.id) { StartScreen(hiltViewModel(), navController) }
+                composable(Routes.Inicio.id) { StartScreen() }
                 composable(Routes.PerfilUsuario.id) { RegisterScreen(
                     registerViewModel = hiltViewModel(),
                     navController = navController,
@@ -97,14 +95,14 @@ fun MainMenuNavigation(navController: NavHostController) {
                 composable(Routes.Informacion.id) { InformationScreen(navController) }
                 composable(Routes.Config.id) { ConfigurationScreen(navController) }
                 composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController=navController, boolean = true) }
-                composable(Routes.ConfigActivacionAlarma.id) {
-                    ActivationMethodScreen(
-                        hiltViewModel(),
-                        navController,
-                        {},
-                        true
-                    )
-                }
+//                composable(Routes.ConfigActivacionAlarma.id) {
+//                    ActivationMethodScreen(
+//                        hiltViewModel(),
+//                        navController,
+//                        {},
+//                        true
+//                    )
+//                }
                 composable(Routes.ConfigSonidoAlarma.id) {
                     SoundSelectScreen(
                         hiltViewModel(),

@@ -1,17 +1,14 @@
 package com.uan.epilepsyalarm20.ui.screens.menu
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
@@ -68,15 +65,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
         message = viewModel.getEmergencyMessage() ?: ""
         instructions = viewModel.getEmergencyInstructions() ?: ""
     }
-//
-//    Handler {
-//    navController.navigate(Routes.Informacion.id)
-//
 
     BackHandler {
         if(!boolean) {
-            val activity = context as? Activity
-            activity?.moveTaskToBack(true) // Mueve la app al fondo sin cerrarla
+            go(Routes.PerfilUsuario)
         }else {
             navController?.navigateUp()
         }
@@ -98,7 +90,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                 }
                 else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(31.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -114,14 +106,25 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
                     append("subir volumen")
                 }
-//                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-//                    append(" y ")
-//                }
-//                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
-//                    append("apagado")
-//                }
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
                     append(", será el activador de la alarma.")
+                }
+            },
+            style = MaterialTheme.typography.titleLarge.copy(
+                textAlign = TextAlign.Center
+            ),
+        )
+
+        BasicText(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("Debes mantener presionado el botón de ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    append("subir volumen")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append(" para poder activar la alarma.")
                 }
             },
             style = MaterialTheme.typography.titleLarge.copy(
@@ -134,13 +137,6 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             contentDescription = "Sosteniendo teléfono",
             modifier = Modifier.size(imageSize())
         )
-
-//        Text(
-//            text = stringResource(R.string.Mensaje_De_Explicacion),
-//            style = MaterialTheme.typography.titleLarge,
-//            color = MaterialTheme.colorScheme.onBackground,
-//            textAlign = TextAlign.Center
-//        )
 
         BasicText(
             text = buildAnnotatedString {
@@ -184,25 +180,29 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             modifier = Modifier.fillMaxWidth()
         )
 
+        //Existe una posible fusión entre botón de guardar y siguiente para simplificar interfaz inicial
         CustomButton(text = stringResource(R.string.guardar)) {
             if(message.isNotEmpty()){
                 viewModel.updateEmergencyMessage(message)
-                showSuccessMessage = true
-
-                if(instructions.isNotEmpty()){
-                    viewModel.updateEmergencyInstructions(instructions)
-                    showSuccessMessage = true
-                }
             }
+            if(instructions.isNotEmpty()){
+                viewModel.updateEmergencyInstructions(instructions)
+            }
+            showSuccessMessage = instructions.isNotEmpty() || message.isNotEmpty()
         }
 
         // Botón siguiente
         CustomButton(text = stringResource(R.string.siguiente)) {
             if(navController != null) {
-                navController.navigate(Routes.ConfigActivacionAlarma.id)
+                navController.navigate(Routes.ConfigSonidoAlarma.id)
             } else {
-                go(Routes.ConfigActivacionAlarma)
+                go(Routes.ConfigSonidoAlarma)
             }
+//            if(navController != null) {
+//                navController.navigate(Routes.ConfigActivacionAlarma.id)
+//            } else {
+//                go(Routes.ConfigActivacionAlarma)
+//            }
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,12 +24,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
-import com.uan.epilepsyalarm20.domain.models.StartViewModel
 import com.uan.epilepsyalarm20.ui.theme.imageSize
+import com.uan.epilepsyalarm20.utils.EmergencyLauncher
+
 @Composable
-fun StartScreen(viewModel: StartViewModel, navController: NavHostController) {
+fun StartScreen() {
     val context = LocalContext.current
 
     BackHandler {
@@ -57,7 +58,11 @@ fun StartScreen(viewModel: StartViewModel, navController: NavHostController) {
         Image(
             painter = painterResource(R.drawable.start_screen_logo),
             contentDescription = "Logo Epilepsy Alarm",
-            modifier = Modifier.size(imageSize())
+            modifier = Modifier
+                .size(imageSize())
+                .clickable {
+                    EmergencyLauncher.launch(context)
+                }
         )
     }
 }

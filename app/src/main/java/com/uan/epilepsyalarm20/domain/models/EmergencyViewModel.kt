@@ -25,10 +25,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class EmergencyViewModel @Inject constructor(
@@ -102,7 +104,7 @@ class EmergencyViewModel @Inject constructor(
 
         viewModelScope.launch {
             for (i in 5 downTo 0) {
-                delay(1000L)
+                delay(1.seconds)
                 if (_isCancelled.value) {
                     _countdown.value = 5
                     return@launch
@@ -128,15 +130,18 @@ class EmergencyViewModel @Inject constructor(
         }
     }
 
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    private suspend fun fetchLocation(): String? {
-        return withTimeoutOrNull(5000) {
-            suspendCoroutine  { continuation ->
+    @RequiresPermission(allOf = [
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ])
+    private suspend fun fetchLocation(): String {
+        return withTimeoutOrNull(5.seconds) {
+            suspendCancellableCoroutine { continuation ->
                 locationManager.getCurrentLocation { link ->
                     continuation.resume(link)
                 }
             }
-        } ?: "Ubicación no dispobible"
+        } ?: "Ubicación no disponible"
     }
 
 
@@ -187,9 +192,9 @@ class EmergencyViewModel @Inject constructor(
         torchJob = viewModelScope.launch {
             while (_isEmergencyActive.value) {
                 cameraManager.setTorchMode(cameraId, true) // Encender linterna
-                delay(500)
+                delay(500.milliseconds)
                 cameraManager.setTorchMode(cameraId, false) // Apagar linterna
-                delay(500)
+                delay(500.milliseconds)
             }
         }
     }

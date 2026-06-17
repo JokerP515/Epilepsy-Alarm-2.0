@@ -62,7 +62,7 @@ fun SoundSelectScreen(
         if(navController != null) {
             navController.navigateUp()
         } else {
-            go(Routes.ConfigActivacionAlarma)
+            go(Routes.ConfigAlarma)
         }
     }
 

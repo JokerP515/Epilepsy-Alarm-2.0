@@ -1,11 +1,10 @@
 package com.uan.epilepsyalarm20.data.service
 
 import android.accessibilityservice.AccessibilityService
-import android.content.Intent
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import com.uan.epilepsyalarm20.EmergencyActivity
 import com.uan.epilepsyalarm20.data.repository.PreferencesManager
+import com.uan.epilepsyalarm20.utils.EmergencyLauncher
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +14,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @AndroidEntryPoint
 class VolumeButtonAccessibilityService : AccessibilityService() {
@@ -55,8 +55,8 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
 //                            }
                             "long_press" -> {
                                 emergencyJob = coroutineScope.launch {
-                                    delay(_timeLimit)
-                                    launchEmergencyActivity()
+                                    delay(_timeLimit.milliseconds)
+                                    EmergencyLauncher.launch(this@VolumeButtonAccessibilityService)
                                 }
                             }
                         }
@@ -81,16 +81,6 @@ class VolumeButtonAccessibilityService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         coroutineScope.cancel()
-    }
-
-    private fun launchEmergencyActivity() {
-        val intent = Intent(this, EmergencyActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-        }
-        startActivity(intent)
     }
 
     // Para manejar 2 o 3 veces el botón de volumen

@@ -40,6 +40,11 @@ import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
 
+@Deprecated(
+    message = "No need to use this screen as there's only one option to activate the alarm.",
+    replaceWith = ReplaceWith("SoundSelectScreen"),
+    level = DeprecationLevel.WARNING
+)
 @Composable
 fun ActivationMethodScreen(
     activationMethodViewModel: ActivationMethodViewModel,
