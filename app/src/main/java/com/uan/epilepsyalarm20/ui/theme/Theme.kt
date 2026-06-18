@@ -258,7 +258,7 @@ fun EpilepsyAlarm20Theme(
     content: @Composable() () -> Unit
 ) {
   val colorScheme = when {
-      dynamicColor && true -> {
+      dynamicColor -> {
           val context = LocalContext.current
           if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
       }

@@ -114,7 +114,7 @@ fun ActivationMethodScreen(
 //        )
 
         Image(
-            painter = painterResource(R.drawable.phone),
+            painter = painterResource(R.drawable.phone_adjusted),
             contentDescription = "Dispositivo Activación",
             modifier = Modifier.size(imageSize())
         )

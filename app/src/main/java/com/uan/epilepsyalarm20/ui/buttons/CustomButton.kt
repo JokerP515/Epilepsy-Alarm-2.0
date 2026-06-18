@@ -1,5 +1,6 @@
 package com.uan.epilepsyalarm20.ui.buttons
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,7 +45,8 @@ fun CustomButton2 (
         modifier = Modifier
             .padding(8.dp),
         shape = RoundedCornerShape(0.dp),
-        colors = color
+        colors = color,
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer)
     ) {
         Text(
             text = text,

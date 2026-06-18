@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
@@ -42,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.StartViewModel
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
@@ -85,10 +87,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                     Modifier
                         .padding(
                             top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
-                            bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+                            bottom = WindowInsets.systemBars.asPaddingValues()
+                                .calculateBottomPadding()
                         )
-                }
-                else Modifier
+                } else Modifier
             ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -110,7 +112,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                     append(", será el activador de la alarma.")
                 }
             },
-            style = MaterialTheme.typography.titleLarge.copy(
+            style = MaterialTheme.typography.titleMedium.copy(
                 textAlign = TextAlign.Center
             ),
         )
@@ -127,13 +129,13 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                     append(" para poder activar la alarma.")
                 }
             },
-            style = MaterialTheme.typography.titleLarge.copy(
+            style = MaterialTheme.typography.titleMedium.copy(
                 textAlign = TextAlign.Center
             ),
         )
 
         Image(
-            painter = painterResource(R.drawable.holding_phone),
+            painter = painterResource(R.drawable.holding_phone_adjusted),
             contentDescription = "Sosteniendo teléfono",
             modifier = Modifier.size(imageSize())
         )
@@ -180,29 +182,58 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             modifier = Modifier.fillMaxWidth()
         )
 
-        //Existe una posible fusión entre botón de guardar y siguiente para simplificar interfaz inicial
-        CustomButton(text = stringResource(R.string.guardar)) {
-            if(message.isNotEmpty()){
-                viewModel.updateEmergencyMessage(message)
+        Column (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End
+        ) {
+            CustomButton2(
+                text = stringResource(R.string.guardar),
+                color = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ){
+                if(message.isNotEmpty()){
+                    viewModel.updateEmergencyMessage(message)
+                }
+                if(instructions.isNotEmpty()){
+                    viewModel.updateEmergencyInstructions(instructions)
+                }
+                showSuccessMessage = instructions.isNotEmpty() || message.isNotEmpty()
             }
-            if(instructions.isNotEmpty()){
-                viewModel.updateEmergencyInstructions(instructions)
-            }
-            showSuccessMessage = instructions.isNotEmpty() || message.isNotEmpty()
         }
 
-        // Botón siguiente
-        CustomButton(text = stringResource(R.string.siguiente)) {
-            if(navController != null) {
-                navController.navigate(Routes.ConfigSonidoAlarma.id)
-            } else {
-                go(Routes.ConfigSonidoAlarma)
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            CustomButton2(
+                text = stringResource(R.string.atras),
+                color = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            ){
+                if(!boolean) {
+                    go(Routes.PerfilUsuario)
+                }else {
+                    navController?.navigateUp()
+                }
             }
-//            if(navController != null) {
-//                navController.navigate(Routes.ConfigActivacionAlarma.id)
-//            } else {
-//                go(Routes.ConfigActivacionAlarma)
-//            }
+
+            CustomButton2(
+                text = stringResource(R.string.siguiente),
+                color = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            ){
+                if(navController != null) {
+                    navController.navigate(Routes.ConfigSonidoAlarma.id)
+                } else {
+                    go(Routes.ConfigSonidoAlarma)
+                }
+            }
         }
     }
 

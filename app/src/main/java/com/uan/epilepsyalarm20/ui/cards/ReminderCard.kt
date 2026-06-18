@@ -11,12 +11,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
 import androidx.compose.ui.unit.dp
 import com.uan.epilepsyalarm20.ui.theme.reminderCardColors
 
 @Composable
-fun ReminderCard(title: String = "Reminder") {
+fun ReminderCard(
+    title: String = "Reminder",
+    style: TextStyle = MaterialTheme.typography.bodyLarge
+) {
     Card (
         modifier = Modifier
             .fillMaxWidth()
@@ -32,7 +36,7 @@ fun ReminderCard(title: String = "Reminder") {
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = style,
                 color = MaterialTheme.colorScheme.primaryContainer,
                 fontWeight = W400
             )

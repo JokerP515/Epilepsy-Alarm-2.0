@@ -5,17 +5,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -43,6 +44,7 @@ import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.domain.models.SoundSelectViewModel
 import com.uan.epilepsyalarm20.domain.models.Sounds
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
 import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
@@ -130,13 +132,6 @@ fun SoundSelectScreen(
             ),
         )
 
-//        Text(
-//            text = stringResource(R.string.selecciona_el_sonido_de_la_alarma),
-//            style = MaterialTheme.typography.titleLarge,
-//            color = MaterialTheme.colorScheme.onBackground,
-//            textAlign = TextAlign.Center
-//        )
-
         EnumDropdown(
             selectedOption=selectedSound,
             options=sounds,
@@ -151,25 +146,48 @@ fun SoundSelectScreen(
             soundSelectViewModel.togglePlayStop(selectedSound)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Image(
-            painter = painterResource(R.drawable.bell),
+            painter = painterResource(R.drawable.bell_adjusted),
             contentDescription = stringResource(R.string.alarma),
             modifier = Modifier.size(imageSize())
         )
 
-        CustomButton (text = stringResource(R.string.finalizar)) {
-            if(isSoundSelected(selectedSound)){
-                soundSelectViewModel.saveSoundPreference(selectedSound.getFileName())
-                mainViewModel.setInitialConfigCompleted()
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            CustomButton2(
+                text = stringResource(R.string.atras),
+                color = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            ){
                 if(navController != null) {
-                    showSuccessMessage = true
+                    navController.navigateUp()
                 } else {
-                    go(Routes.MenuPrincipal)
+                    go(Routes.ConfigAlarma)
                 }
-            }else {
-                showProblem = true
+            }
+
+            CustomButton2(
+                text = stringResource(R.string.finalizar),
+                color = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            ){
+                if(isSoundSelected(selectedSound)){
+                    soundSelectViewModel.saveSoundPreference(selectedSound.getFileName())
+                    mainViewModel.setInitialConfigCompleted()
+                    if(navController != null) {
+                        showSuccessMessage = true
+                    } else {
+                        go(Routes.MenuPrincipal)
+                    }
+                }else {
+                    showProblem = true
+                }
             }
         }
 

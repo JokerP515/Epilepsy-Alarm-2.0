@@ -90,6 +90,10 @@ class EmergencyViewModel @Inject constructor(
         return user.value?.instruccionesEmergencia
     }
 
+    fun getUserMessage(): String? {
+        return user.value?.mensajeEmergencia
+    }
+
     @RequiresPermission(allOf = [
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -116,6 +120,11 @@ class EmergencyViewModel @Inject constructor(
                 onActivateEmergency()
             }
         }
+    }
+
+    fun pauseEmergency() {
+        audioPlayer.stopAudio()
+        stopTorchFlashing()
     }
 
     fun cancelEmergency() {
@@ -172,7 +181,7 @@ class EmergencyViewModel @Inject constructor(
                 if (userEntity != null && location != null) {
                     val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia."
 
-                    contacts.map { contact ->
+                    contacts.forEach { contact ->
                         sendPreparedMessage(contact.phoneNumber, message, location)
                     }
                 }
