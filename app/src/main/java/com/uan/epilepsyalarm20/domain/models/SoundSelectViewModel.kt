@@ -23,10 +23,14 @@ class SoundSelectViewModel @Inject constructor(
 
     fun togglePlayStop(sound: Sounds) {
         if (isPlaying.value) {
-            audioPlayer.stopAudio()
+            stopAudio()
         } else {
             audioPlayer.playAudio(sound.getFileName(), false)
         }
+    }
+
+    fun stopAudio() {
+        audioPlayer.stopAudio()
     }
 
 }
