@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,6 +61,13 @@ fun SoundSelectScreen(
     go: (Any) -> Unit = {},
     boolean: Boolean = false
 ) {
+
+    DisposableEffect(Unit) {
+        onDispose {
+            soundSelectViewModel.stopAudio()
+        }
+    }
+
     BackHandler {
         if(navController != null) {
             navController.navigateUp()
@@ -178,6 +186,7 @@ fun SoundSelectScreen(
                 )
             ){
                 if(isSoundSelected(selectedSound)){
+                    soundSelectViewModel.stopAudio()
                     soundSelectViewModel.saveSoundPreference(selectedSound.getFileName())
                     mainViewModel.setInitialConfigCompleted()
                     if(navController != null) {
