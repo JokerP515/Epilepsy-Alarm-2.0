@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
@@ -132,7 +133,10 @@ fun ActivationMethodScreen(
             onOptionSelected = { selectedActivationMethod = it }
         )
 
-        CustomButton(text = stringResource(R.string.guardar_opcion)) {
+        CustomButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.guardar_opcion)
+        ) {
             activationMethodViewModel.saveActivationMethod(selectedActivationMethod.getValue())
             if(navController != null) {
                 navController.navigate(Routes.ConfigSonidoAlarma.id)

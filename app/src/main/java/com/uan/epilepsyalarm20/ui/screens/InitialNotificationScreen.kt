@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -125,7 +126,10 @@ fun InitialNotificationScreen(
             )
         }
 
-        CustomButton(text = stringResource(R.string.iniciar)) {
+        CustomButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.iniciar)
+        ) {
             if (isChecked) initialNotificationViewModel.notShowAgain()
             if (nextDestination != null) go(nextDestination)
         }

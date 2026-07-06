@@ -1,61 +1,86 @@
 package com.uan.epilepsyalarm20.ui.dropdown
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.uan.epilepsyalarm20.ui.theme.textFieldColors
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
+import com.uan.designsystem.uikit.components.UanDropdownMenu
+import com.uan.designsystem.uikit.components.UanDropdownMenuItem
+import com.uan.designsystem.uikit.components.UanTextField
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Enum<T>> EnumDropdown(
     selectedOption: T?,
     options: List<T>,
     label: String,
     placeholder: String,
-    onOptionSelected: (T) -> Unit
+    onOptionSelected: (T) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it }
-    ) {
-        OutlinedTextField(
-            value = selectedOption?.toString() ?: placeholder,
+    val menuItems = remember(options) {
+        options.map { item ->
+            UanDropdownMenuItem(
+                label = item.toString(),
+                contentDescription = "Seleccionar ${item.name}",
+                onClick = {
+                    onOptionSelected(item)
+                    expanded = false
+                }
+            )
+        }
+    }
+
+    Box(modifier = modifier) {
+        UanTextField(
+            value = selectedOption?.toString() ?: "",
             onValueChange = {},
-            label = { Text(label) },
+            label = label,
+            placeholder = placeholder,
             readOnly = true,
+            modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            colors = textFieldColors(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true) // Hace que toda el área sea clickeable
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                    contentDescription = if (expanded) "Cerrar menú" else "Abrir menú"
+                )
+            }
         )
 
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            options.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(item.toString()) },
-                    onClick = {
-                        onOptionSelected(item)
-                        expanded = false
-                    }
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    expanded = !expanded
+                }
+        )
+
+        if (expanded) {
+            Popup(
+                properties = PopupProperties(focusable = true),
+                onDismissRequest = { expanded = false }
+            ) {
+                UanDropdownMenu(
+                    expanded = true,
+                    items = menuItems,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

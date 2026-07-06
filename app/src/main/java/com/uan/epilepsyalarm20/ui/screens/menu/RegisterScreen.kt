@@ -17,11 +17,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.components.UanCardDefaults
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.UserEntity
 import com.uan.epilepsyalarm20.domain.models.BloodType
@@ -53,8 +52,8 @@ import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.cards.ReminderCard
 import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
+import com.uan.epilepsyalarm20.ui.fields.ClickableUanTextField
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
-import com.uan.epilepsyalarm20.ui.theme.textFieldColors
 import kotlinx.coroutines.launch
 
 @Composable
@@ -67,6 +66,8 @@ fun RegisterScreen(
 ) {
 
     val context = LocalContext.current
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
 
     BackHandler {
         if(boolean && navController != null){
@@ -117,7 +118,7 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
@@ -130,7 +131,7 @@ fun RegisterScreen(
                         )
                 } else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(UanCardDefaults.sectionSpacing)
     ) {
 
         HeadlineCard(
@@ -144,19 +145,18 @@ fun RegisterScreen(
             )
         }
 
-        OutlinedTextField(
+        ClickableUanTextField(
             value = registerViewModel.name,
             onValueChange = { registerViewModel.name = it },
-            label = { Text(stringResource(R.string.nombre)) },
+            label = stringResource(R.string.nombre),
             modifier = Modifier.fillMaxWidth(),
-            colors = textFieldColors()
         )
-        OutlinedTextField(
+
+        ClickableUanTextField(
             value = registerViewModel.lastName ,
             onValueChange = { registerViewModel.lastName = it },
-            label = { Text(stringResource(R.string.apellido)) },
+            label = stringResource(R.string.apellido),
             modifier = Modifier.fillMaxWidth(),
-            colors = textFieldColors()
         )
 
         // Tipo de sangre
@@ -177,65 +177,62 @@ fun RegisterScreen(
             onOptionSelected = { selectedDocumentType = it }
         )
 
-        OutlinedTextField(
-            value = documentInput, //registerViewModel.document
+        ClickableUanTextField(
+            value = documentInput,
             onValueChange = { input ->
                 if (input.all { char -> char.isDigit() }) {
                     documentInput = input
-                }
-            },
-            label = { Text(stringResource(R.string.documento)) },
+                } },
+            label = stringResource(R.string.documento),
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            colors = textFieldColors()
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         if(!boolean && contactsViewModel != null) {
             BasicText(
                 text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    withStyle(style = SpanStyle(color = colors.onSurface)) {
                         append("Puedes agregar más ")
                     }
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    withStyle(style = SpanStyle(color = colors.muted)) {
                         append("contactos de emergencia")
                     }
-                    withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    withStyle (style = SpanStyle(color = colors.onSurface)) {
                         append(" desde la pestaña de ")
                     }
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    withStyle(style = SpanStyle(color = colors.muted)) {
                         append("configuración.")
                     }
                 },
-                style = MaterialTheme.typography.bodyLarge.copy(
+                style = UanCardDefaults.bodyStyle.copy(
                     textAlign = TextAlign.Center
                 )
             )
 
-            OutlinedTextField(
+            ClickableUanTextField(
                 value = contactName,
                 onValueChange = { contactName = it },
-                label = { Text(stringResource(R.string.nombre_del_contacto_de_emergencia)) },
+                label = stringResource(R.string.nombre_del_contacto_de_emergencia),
                 modifier = Modifier.fillMaxWidth(),
-                colors = textFieldColors()
             )
 
-            OutlinedTextField(
+            ClickableUanTextField(
                 value = contactPhoneNumber,
                 onValueChange = { input ->
                     if (input.all { char -> char.isDigit() }) {
                         contactPhoneNumber = input
                     }
                 },
-                label = { Text(stringResource(R.string.numero_del_contacto_de_emergencia)) },
+                label = stringResource(R.string.numero_del_contacto_de_emergencia),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = textFieldColors()
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomButton(
+            modifier = Modifier.fillMaxWidth(),
             text = if(!boolean) stringResource(R.string.continuar) else stringResource(R.string.guardar),
         ) {
             val missingFields = checkMissingFields(

@@ -2,6 +2,7 @@ package com.uan.epilepsyalarm20.ui.cards
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -12,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -57,12 +59,18 @@ fun ContactDialog(
             }
         },
         confirmButton = {
-            CustomButton(if (isEditing) stringResource(R.string.guardar) else stringResource(R.string.agregar)) {
+            CustomButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = if (isEditing) stringResource(R.string.guardar) else stringResource(R.string.agregar)
+            ) {
                 onConfirm(EmergencyContactEntity(userId = 1, name = name, phoneNumber = phone))
             }
         },
         dismissButton = {
-            CustomButton(stringResource(R.string.cancelar)) { onDismiss() }
+            CustomButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.cancelar)
+            ) { onDismiss() }
         }
     )
 }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -45,7 +44,6 @@ import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.domain.models.SoundSelectViewModel
 import com.uan.epilepsyalarm20.domain.models.Sounds
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
 import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
@@ -148,7 +146,9 @@ fun SoundSelectScreen(
             onOptionSelected= {selectedSound = it}
         )
 
-        CustomButton(text = if(isPlaying) stringResource(R.string.detener_alarma_seleccionada) else stringResource(
+        CustomButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = if(isPlaying) stringResource(R.string.detener_alarma_seleccionada) else stringResource(
             R.string.reproducir_alarma_seleccionada
         )) {
             soundSelectViewModel.togglePlayStop(selectedSound)
@@ -164,12 +164,10 @@ fun SoundSelectScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CustomButton2(
-                text = stringResource(R.string.atras),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
+                text = stringResource(R.string.atras)
             ){
                 if(navController != null) {
                     navController.navigateUp()
@@ -178,12 +176,10 @@ fun SoundSelectScreen(
                 }
             }
 
-            CustomButton2(
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
                 text = stringResource(R.string.finalizar),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
             ){
                 if(isSoundSelected(selectedSound)){
                     soundSelectViewModel.stopAudio()

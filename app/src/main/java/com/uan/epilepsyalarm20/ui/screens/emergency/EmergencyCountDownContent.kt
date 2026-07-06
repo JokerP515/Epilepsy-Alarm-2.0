@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.EmergencyViewModel
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 
 @Composable
 fun EmergencyCountDownContent(
@@ -80,12 +79,10 @@ fun EmergencyCountDownContent(
 
         Spacer(modifier = Modifier.height(97.dp))
 
-        CustomButton2(
+        // Posible Color inverso
+        CustomButton(
+            modifier = Modifier.padding(8.dp),
             text = stringResource(R.string.cancelar_alarma),
-            color = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
         ) {
             viewModel.cancelEmergency()
             val activity = context as? Activity

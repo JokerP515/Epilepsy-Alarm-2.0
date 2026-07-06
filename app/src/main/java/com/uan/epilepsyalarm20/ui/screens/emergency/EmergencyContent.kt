@@ -57,8 +57,7 @@ fun EmergencyContent(
         ){
 
             ReminderCard(
-                title = "Instrucciones De Atención",
-                style = MaterialTheme.typography.titleLarge
+                title = "Instrucciones De Atención"
             )
 
             Text(

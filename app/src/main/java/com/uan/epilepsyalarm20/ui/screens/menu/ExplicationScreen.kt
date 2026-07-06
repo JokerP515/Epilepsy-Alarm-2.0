@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
@@ -44,7 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.StartViewModel
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
@@ -186,12 +185,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.End
         ) {
-            CustomButton2(
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
                 text = stringResource(R.string.guardar),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    contentColor = MaterialTheme.colorScheme.primaryContainer
-                )
             ){
                 if(message.isNotEmpty()){
                     viewModel.updateEmergencyMessage(message)
@@ -207,12 +204,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CustomButton2(
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
                 text = stringResource(R.string.atras),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
             ){
                 if(!boolean) {
                     go(Routes.PerfilUsuario)
@@ -221,12 +216,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                 }
             }
 
-            CustomButton2(
-                text = stringResource(R.string.siguiente),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
+                text = stringResource(R.string.siguiente)
             ){
                 if(navController != null) {
                     navController.navigate(Routes.ConfigSonidoAlarma.id)
