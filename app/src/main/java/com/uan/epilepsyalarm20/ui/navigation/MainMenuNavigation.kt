@@ -8,13 +8,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.uan.designsystem.uikit.components.UanAppBar
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.screens.menu.ConfigurationScreen
@@ -37,51 +32,51 @@ import com.uan.epilepsyalarm20.ui.screens.menu.StartScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainMenuNavigation(navController: NavHostController) {
-    val items = listOf(
+    val navItems = listOf(
         Routes.Config to Icons.Outlined.Settings,
         Routes.Inicio to Icons.Outlined.Home,
-        Routes.PerfilUsuario to Icons.Outlined.Person,
-        // Routes.Informacion to Icons.Outlined.Info
+        Routes.PerfilUsuario to Icons.Outlined.Person
     )
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry.value?.destination?.route
+    val selectedIndex = navItems.indexOfFirst { it.first.id == currentRoute }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.epilepsy_alarm)) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            UanAppBar(
+                title = stringResource(R.string.epilepsy_alarm),
             )
         },
         bottomBar = {
-            NavigationBar {
-                val currentBackStackEntry = navController.currentBackStackEntryAsState()
-                val currentRoute = currentBackStackEntry.value?.destination?.route
+            CustomUanToolbar(
+                selectedIndex = selectedIndex,
+                onItemSelected = { index ->
+                    val targetRoute = navItems[index].first.id
 
-                items.forEach { (route, icon) ->
-                    NavigationBarItem(
-                        icon = { Icon(imageVector = icon, contentDescription = null) },
-                        label = { Text(route.id) },
-                        selected = currentRoute == route.id,
-                        onClick = {
-                            if(currentRoute != route.id) {
-                                navController.navigate(route.id) {
-                                    popUpTo(Routes.Inicio.id) { inclusive = false }
-                                    launchSingleTop = true
-                                }
-                            }
+                    if (currentRoute != targetRoute) {
+                        navController.navigate(targetRoute) {
+                            popUpTo(Routes.Inicio.id) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                items = navItems.map { (route, icon) ->
+                    CustomToolbarItemData(
+                        contentDescription = route.id,
+                        icon = {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null
+                            )
                         }
                     )
                 }
-            }
+            )
         }
-
     ) { innerPadding ->
         Box (modifier = Modifier.padding(innerPadding)) {
             NavHost(
                 navController = navController,
-                // startDestination = Routes.Informacion.id
                 startDestination = Routes.Inicio.id
             ) {
                 composable(Routes.Inicio.id) { StartScreen() }
