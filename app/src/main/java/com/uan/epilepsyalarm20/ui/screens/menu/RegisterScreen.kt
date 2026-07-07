@@ -194,17 +194,17 @@ fun RegisterScreen(
                     withStyle(style = SpanStyle(color = colors.onSurface)) {
                         append("Puedes agregar más ")
                     }
-                    withStyle(style = SpanStyle(color = colors.muted)) {
+                    withStyle(style = SpanStyle(color = colors.primary)) {
                         append("contactos de emergencia")
                     }
                     withStyle (style = SpanStyle(color = colors.onSurface)) {
                         append(" desde la pestaña de ")
                     }
-                    withStyle(style = SpanStyle(color = colors.muted)) {
+                    withStyle(style = SpanStyle(color = colors.primary)) {
                         append("configuración.")
                     }
                 },
-                style = UanCardDefaults.bodyStyle.copy(
+                style = UanCardDefaults.titleStyle.copy(
                     textAlign = TextAlign.Center
                 )
             )

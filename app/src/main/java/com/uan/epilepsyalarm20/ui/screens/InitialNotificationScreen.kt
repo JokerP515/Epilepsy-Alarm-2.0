@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.InitialNotificationViewModel
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
@@ -52,6 +53,8 @@ fun InitialNotificationScreen(
 ) {
     var isChecked by rememberSaveable { mutableStateOf(false) }
     val userExistsState by mainViewModel.userExists.collectAsState(initial = null)
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
 
     // Determinar la ruta de navegación
     val nextDestination = when (userExistsState) {
@@ -65,7 +68,7 @@ fun InitialNotificationScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .padding(
@@ -78,7 +81,7 @@ fun InitialNotificationScreen(
         Text(
             text = stringResource(R.string.titulo_funcionamiento_de_la_aplicacion_epilepsy_alarm),
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primaryContainer,
+            color = colors.primary,
             textAlign = TextAlign.Center,
             fontWeight = W700
         )
@@ -88,7 +91,7 @@ fun InitialNotificationScreen(
         Text(
             text = stringResource(R.string.Explicacion_Funcionamiento_EPAlarm),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = colors.onSurface,
             fontWeight = W400
         )
 
@@ -109,11 +112,11 @@ fun InitialNotificationScreen(
                     .size(24.dp)
                     .border(
                         width = 2.dp,
-                        color = MaterialTheme.colorScheme.primaryContainer,
+                        color = colors.onSurface,
                         shape = CircleShape
                     )
                     .background(
-                        color = if (isChecked) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background,
+                        color = if (isChecked) colors.primary else colors.background,
                         shape = CircleShape
                     )
                     .clickable { isChecked = !isChecked }
@@ -121,7 +124,7 @@ fun InitialNotificationScreen(
             Text(
                 text = stringResource(R.string.no_volver_a_mostrar_este_mensaje),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = colors.onSurface,
                 fontWeight = W600
             )
         }

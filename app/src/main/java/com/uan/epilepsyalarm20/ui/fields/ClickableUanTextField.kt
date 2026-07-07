@@ -18,7 +18,8 @@ fun ClickableUanTextField(
     label: String,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    readOnly: Boolean = false
+    readOnly: Boolean = false,
+    placeholder: String ?= null
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -35,6 +36,7 @@ fun ClickableUanTextField(
                 focusRequester.requestFocus()
             },
         keyboardOptions = keyboardOptions,
-        readOnly = readOnly
+        readOnly = readOnly,
+        placeholder = placeholder
     )
 }

@@ -3,7 +3,6 @@ package com.uan.epilepsyalarm20.ui.cards
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.W400
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.unit.dp
 import com.uan.designsystem.uikit.components.UanCardDefaults
-import com.uan.designsystem.uikit.foundation.UanInteractiveDefaults
 import com.uan.designsystem.uikit.foundation.UanTone
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 
@@ -44,7 +42,6 @@ fun HeadlineCard(title: String, description: String? = null) {
         Row(
             Modifier.fillMaxWidth()
                 .padding(16.dp)
-                .defaultMinSize(minHeight = UanInteractiveDefaults.minTouchTarget)
                 .clip(shape),
             horizontalArrangement = Arrangement.spacedBy(UanCardDefaults.sectionSpacing)
         ) {
@@ -59,14 +56,14 @@ fun HeadlineCard(title: String, description: String? = null) {
                 Text(
                     text = title,
                     style = UanCardDefaults.titleStyle,
-                    color = colors.onSurface,
+                    color = colors.primary,
                     fontWeight = W600
                 )
                 if(description != null) {
                     Text(
                         text = description,
                         style = UanCardDefaults.bodyStyle,
-                        color = colors.muted,
+                        color = colors.onSurface,
                         fontWeight = W400
                     )
                 }

@@ -16,11 +16,8 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,19 +38,23 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.components.UanCardDefaults
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.StartViewModel
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
+import com.uan.epilepsyalarm20.ui.fields.ClickableUanTextField
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
-import com.uan.epilepsyalarm20.ui.theme.textFieldColors
 import kotlinx.coroutines.launch
 
 @Composable
 fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Unit = {}, boolean: Boolean = false, viewModel: StartViewModel = hiltViewModel()){
 
     val context = LocalContext.current
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
 
     var message by rememberSaveable { mutableStateOf("") }
     var instructions by rememberSaveable { mutableStateOf("") }
@@ -78,7 +79,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
@@ -101,83 +102,81 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("El botón de ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("subir volumen")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append(", será el activador de la alarma.")
                 }
             },
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = UanCardDefaults.bodyStyle.copy(
                 textAlign = TextAlign.Center
             ),
         )
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("Debes mantener presionado el botón de ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("subir volumen")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append(" para poder activar la alarma.")
                 }
             },
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = UanCardDefaults.bodyStyle.copy(
                 textAlign = TextAlign.Center
             ),
         )
 
         Image(
             painter = painterResource(R.drawable.holding_phone_adjusted),
-            contentDescription = "Sosteniendo teléfono",
+            contentDescription = stringResource(R.string.sosteniendo_telefono),
             modifier = Modifier.size(imageSize())
         )
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("Escribe un ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("mensaje personalizado ")
                 }
-                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle (style = SpanStyle(color = colors.onSurface)) {
                     append("que se enviará al activar la alarma e incluye ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("instrucciones ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("breves para el manejo de la crisis.")
                 }
             },
-            style = MaterialTheme.typography.bodyLarge.copy(
+            style = UanCardDefaults.bodyStyle.copy(
                 textAlign = TextAlign.Center
             ),
         )
 
-        // Mensajes de configuración del mensaje
-        OutlinedTextField(
+        // Mensajes de configuración de alarma
+        ClickableUanTextField(
             value = message,
             onValueChange = { message = it},
-            label = { Text(stringResource(R.string.mensaje_de_alerta)) },
-            placeholder = { Text(text = stringResource(R.string.explicacion_mensaje_alerta)) },
-            colors = textFieldColors(),
+            label = stringResource(R.string.mensaje_de_alerta),
+            placeholder = stringResource(R.string.explicacion_mensaje_alerta),
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
+        ClickableUanTextField(
             value = instructions,
             onValueChange = { instructions = it },
-            label = { Text(stringResource(R.string.instrucciones_o_datos_adicionales)) },
-            placeholder = { Text(text = stringResource(R.string.explicacion_instrucciones_o_datos_adicionales)) },
-            colors = textFieldColors(),
+            label = stringResource(R.string.instrucciones_o_datos_adicionales),
+            placeholder = stringResource(R.string.explicacion_instrucciones_o_datos_adicionales),
             modifier = Modifier.fillMaxWidth()
         )
 

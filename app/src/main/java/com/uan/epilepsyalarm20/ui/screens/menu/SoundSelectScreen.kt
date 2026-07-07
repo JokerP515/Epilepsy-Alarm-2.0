@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -39,6 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.components.UanCardDefaults
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.domain.models.SoundSelectViewModel
@@ -74,6 +75,8 @@ fun SoundSelectScreen(
         }
     }
 
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
     val sounds = Sounds.entries
     var selectedSound by rememberSaveable { mutableStateOf(sounds.first()) }
     val isPlaying by soundSelectViewModel.isPlaying.collectAsState()
@@ -95,7 +98,7 @@ fun SoundSelectScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
@@ -108,7 +111,7 @@ fun SoundSelectScreen(
                 }
                 else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(UanCardDefaults.sectionSpacing),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeadlineCard(
@@ -117,23 +120,23 @@ fun SoundSelectScreen(
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("Selecciona el ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("sonido")
                 }
-                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle (style = SpanStyle(color = colors.onSurface)) {
                     append(" de la ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("alarma")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append(".")
                 }
             },
-            style = MaterialTheme.typography.titleLarge.copy(
+            style = UanCardDefaults.titleStyle.copy(
                 textAlign = TextAlign.Center
             ),
         )

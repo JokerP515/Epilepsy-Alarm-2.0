@@ -69,4 +69,6 @@
     <string name="informacion_inicio_activacion">"Oprime el botón físico para enviar una alerta a tus contactos"</string>
     <string name="atras">Atrás</string>
     <string name="instrucciones_personalizadas">Instrucciones personalizadas</string>
+    <string name="logo_epilepsy_alarm">Logo Epilepsy Alarm</string>
+    <string name="sosteniendo_telefono">Sosteniendo teléfono</string>
 </resources>
