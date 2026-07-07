@@ -4,6 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.uan.designsystem.uikit.components.UanButton
+import com.uan.designsystem.uikit.components.UanButtonStyle
 import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 
@@ -11,12 +12,14 @@ import com.uan.designsystem.uikit.theme.UanThemeTokens
 fun CustomButton (
     modifier: Modifier = Modifier,
     text: String,
+    style: UanButtonStyle = UanButtonStyle.Primary,
     onClick: () -> Unit = {},
 ) {
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
     UanButton(
         onClick = onClick,
+        style = style,
         modifier = modifier,
     ) {
         Text(

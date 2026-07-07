@@ -27,8 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.uan.designsystem.uikit.components.UanButton
+import com.uan.designsystem.uikit.components.UanButtonStyle
+import com.uan.designsystem.uikit.components.UanCard
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 
 @Composable
 fun ContactCard(
@@ -39,6 +44,9 @@ fun ContactCard(
     var expanded by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -52,63 +60,34 @@ fun ContactCard(
             tint = MaterialTheme.colorScheme.onBackground
         )
 
-        OutlinedCard(
+        UanCard(
+            title = contact.name,
+            body = if (expanded) "Teléfono: ${contact.phoneNumber}" else null,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp) // Separación entre ícono y card
+                .padding(start = spacing.sm)
                 .animateContentSize(),
-        ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = contact.name,
-                    style = MaterialTheme.typography.titleLarge
-                )
-
+            footer = {
                 if (expanded) {
-                    Text(
-                        text = "Teléfono: ${contact.phoneNumber}",
-                        style = MaterialTheme.typography.titleLarge
-                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        Button (
-                            onClick = { showDialog = true },
+                        horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                    ) {
+                        CustomButton(
+                            text = stringResource(R.string.modificar),
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(0.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
                         ){
-                            Text(
-                                text = stringResource(R.string.modificar),
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                            showDialog = true
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button (
-                            onClick = { onDelete() },
+                        CustomButton(
+                            text = stringResource(R.string.eliminar),
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(0.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error,
-                                contentColor = MaterialTheme.colorScheme.onError
-                            )
-                        ){
-                            Text(
-                                text = stringResource(R.string.eliminar),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
+                            style = UanButtonStyle.Danger,
+                        ){ onDelete() }
                     }
                 }
             }
-        }
+        )
     }
 
     if (showDialog) {
