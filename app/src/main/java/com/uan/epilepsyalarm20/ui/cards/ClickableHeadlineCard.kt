@@ -25,6 +25,7 @@ import com.uan.designsystem.uikit.theme.UanThemeTokens
 fun ClickableHeadlineCard(title: String, description: String? = null, onClick: () -> Unit) {
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val typography = tokens.typography
     val borderColor = UanCardDefaults.borderColor(tone = UanTone.Neutral, enabled = true)
     
     OutlinedCard (
@@ -53,14 +54,14 @@ fun ClickableHeadlineCard(title: String, description: String? = null, onClick: (
             ) {
                 Text(
                     text = title,
-                    style = UanCardDefaults.titleStyle,
+                    style = typography.component,
                     color = colors.primary,
                     fontWeight = W600
                 )
                 if(description != null) {
                     Text(
                         text = description,
-                        style = UanCardDefaults.bodyStyle,
+                        style = typography.general,
                         color = colors.onSurface,
                         fontWeight = W400
                     )

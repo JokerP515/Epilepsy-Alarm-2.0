@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.UserEntity
@@ -68,6 +67,8 @@ fun RegisterScreen(
     val context = LocalContext.current
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val typography = tokens.typography
+    val spacing = tokens.spacing
 
     BackHandler {
         if(boolean && navController != null){
@@ -131,7 +132,7 @@ fun RegisterScreen(
                         )
                 } else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(UanCardDefaults.sectionSpacing)
+        verticalArrangement = Arrangement.spacedBy(spacing.xs)
     ) {
 
         HeadlineCard(
@@ -204,7 +205,7 @@ fun RegisterScreen(
                         append("configuración.")
                     }
                 },
-                style = UanCardDefaults.titleStyle.copy(
+                style = typography.component.copy(
                     textAlign = TextAlign.Center
                 )
             )

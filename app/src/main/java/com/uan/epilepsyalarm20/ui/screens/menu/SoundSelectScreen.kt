@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
@@ -77,6 +76,8 @@ fun SoundSelectScreen(
 
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val typography = tokens.typography
+    val spacing = tokens.spacing
     val sounds = Sounds.entries
     var selectedSound by rememberSaveable { mutableStateOf(sounds.first()) }
     val isPlaying by soundSelectViewModel.isPlaying.collectAsState()
@@ -111,7 +112,7 @@ fun SoundSelectScreen(
                 }
                 else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(UanCardDefaults.sectionSpacing),
+        verticalArrangement = Arrangement.spacedBy(spacing.xs),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeadlineCard(
@@ -136,7 +137,7 @@ fun SoundSelectScreen(
                     append(".")
                 }
             },
-            style = UanCardDefaults.titleStyle.copy(
+            style = typography.component.copy(
                 textAlign = TextAlign.Center
             ),
         )

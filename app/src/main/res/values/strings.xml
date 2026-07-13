@@ -60,7 +60,7 @@
     <string name="nombre_del_contacto_de_emergencia">Nombre del Contacto de Emergencia</string>
     <string name="numero_del_contacto_de_emergencia">Número del Contacto de Emergencia</string>
     <string name="mensaje_personalizado">Mensaje personalizado</string>
-    <string name="contacto_de_emergencia">Contacto de Emergencia</string>
+    <string name="contacto_de_emergencia">Contacto de Emergencia:</string>
     <string name="iniciar">Iniciar</string>
     <string name="persona_ayudando">Persona ayudando</string>
     <string name="continuar">Continuar</string>

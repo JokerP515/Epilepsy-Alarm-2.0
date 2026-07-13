@@ -2,7 +2,6 @@ package com.uan.epilepsyalarm20.ui.screens.emergency
 
 import android.app.Activity
 import android.content.Context
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,14 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.uan.designsystem.uikit.components.UanCard
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
 import com.uan.epilepsyalarm20.data.local.entities.UserEntity
@@ -39,6 +38,11 @@ fun EmergencyContent(
     user: UserEntity,
     firstEmergencyContact: EmergencyContactEntity?
 ){
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
+    val typography = tokens.typography
+    
     val userInstructions = viewModel.getUserInstructions()
     val userMessage = viewModel.getUserMessage()
 
@@ -49,11 +53,10 @@ fun EmergencyContent(
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(colors.background)
                 .padding(16.dp)
-
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp) ,
+            verticalArrangement = Arrangement.spacedBy(spacing.md) ,
         ){
 
             ReminderCard(
@@ -62,125 +65,95 @@ fun EmergencyContent(
 
             Text(
                 text = "1. Mantén la calma y quédate con la persona.",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                style = typography.component,
+                color = colors.primary,
             )
 
             Text(
                 text = "2. Asegura el entorno",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                style = typography.component,
+                color = colors.primary,
             )
 
             Text(
                 text = "3. Colócala de lado",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                style = typography.component,
+                color = colors.primary,
             )
 
             Text(
                 text = "4. No restrinjas ni pongas nada en su boca",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                style = typography.component,
+                color = colors.primary,
             )
 
             Text(
                 text = "5. Mide el tiempo",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                style = typography.component,
+                color = colors.primary,
             )
 
             Text(
                 text = "6. Tras la convulsión, tranquilízala y ayúdala a reorientarse.",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                style = typography.component,
+                color = colors.primary,
             )
 
             userMessage?.let {
-                OutlinedCard (
+                UanCard(
                     modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer)
-                ) {
-                    Column (
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.mensaje_personalizado),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    }
-                }
+                    title = stringResource(R.string.mensaje_personalizado),
+                    body = it,
+                )
             }
 
             userInstructions?.let {
-                OutlinedCard (
+                UanCard(
                     modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer)
-                ) {
-                    Column (
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.instrucciones_personalizadas),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    }
-                }
+                    title = stringResource(R.string.instrucciones_personalizadas),
+                    body = it,
+                )
             }
 
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = colors.primary,
                 thickness = 5.dp
             )
 
             Text(
                 text = "Nombre: ${user.nombre}",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primaryContainer
+                style = typography.component,
+                color = colors.primary
             )
 
             Text(
                 text = "Documento: ${user.numeroDeDocumento}",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primaryContainer
+                style = typography.component,
+                color = colors.primary
             )
 
             Text(
                 text = "Tipo de Sangre: ${user.tipoDeSangre}",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primaryContainer
+                style = typography.component,
+                color = colors.primary
             )
 
             firstEmergencyContact?.let {
                 Text(
                     text = stringResource(R.string.contacto_de_emergencia),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    style = typography.component,
+                    color = colors.primary
                 )
                 Text(
                     text = "Nombre: ${it.name}",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    style = typography.component,
+                    color = colors.primary
                 )
                 Text(
                     text = "Teléfono: ${it.phoneNumber}",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    style = typography.component,
+                    color = colors.primary
                 )
             }
 

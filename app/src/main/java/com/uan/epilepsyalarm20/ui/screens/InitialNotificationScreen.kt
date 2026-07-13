@@ -36,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.InitialNotificationViewModel
@@ -56,6 +55,7 @@ fun InitialNotificationScreen(
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
     val spacing = tokens.spacing
+    val typography = tokens.typography
 
     // Determinar la ruta de navegación
     val nextDestination = when (userExistsState) {
@@ -79,7 +79,7 @@ fun InitialNotificationScreen(
     ) {
         Text(
             text = stringResource(R.string.titulo_funcionamiento_de_la_aplicacion_epilepsy_alarm),
-            style = UanCardDefaults.titleStyle,
+            style = typography.component,
             color = colors.primary,
             textAlign = TextAlign.Center,
             fontWeight = W700
@@ -89,7 +89,7 @@ fun InitialNotificationScreen(
 
         Text(
             text = stringResource(R.string.Explicacion_Funcionamiento_EPAlarm),
-            style = UanCardDefaults.bodyStyle,
+            style = typography.general,
             color = colors.onSurface,
             fontWeight = W400
         )
@@ -122,7 +122,7 @@ fun InitialNotificationScreen(
             )
             Text(
                 text = stringResource(R.string.no_volver_a_mostrar_este_mensaje),
-                style = UanCardDefaults.bodyStyle,
+                style = typography.general,
                 color = colors.onSurface,
                 fontWeight = W600
             )

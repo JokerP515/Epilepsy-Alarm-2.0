@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.uan.designsystem.uikit.components.UanButton
-import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.ContactsViewModel
@@ -36,6 +35,7 @@ fun NewContactScreen(contactsViewModel: ContactsViewModel, navController: NavHos
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
     val spacing = tokens.spacing
+    val typography = tokens.typography
 
     var name by rememberSaveable { mutableStateOf("") }
     var phoneNumber by rememberSaveable { mutableStateOf("") }
@@ -102,7 +102,7 @@ fun NewContactScreen(contactsViewModel: ContactsViewModel, navController: NavHos
         ) {
             Text(
                 text = stringResource(R.string.guardar),
-                style = UanCardDefaults.bodyStyle
+                style = typography.general
             )
         }
     }

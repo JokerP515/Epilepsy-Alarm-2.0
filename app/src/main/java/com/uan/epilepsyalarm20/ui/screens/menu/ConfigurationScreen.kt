@@ -9,22 +9,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.cards.ClickableHeadlineCard
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 
 @Composable
 fun ConfigurationScreen(navController: NavHostController) {
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center
@@ -35,14 +38,14 @@ fun ConfigurationScreen(navController: NavHostController) {
             navController.navigate(Routes.ConfigAlarma.id)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(spacing.md))
 
         ClickableHeadlineCard(
             title = stringResource(R.string.contactos_de_emergencia),
         ) {
             navController.navigate(Routes.Contactos.id)
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(spacing.md))
 
         ClickableHeadlineCard(
             title = stringResource(R.string.informacion_de_la_aplicacion),

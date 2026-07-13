@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.uan.designsystem.uikit.components.UanButtonStyle
-import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.StartViewModel
@@ -57,6 +56,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
     val spacing = tokens.spacing
+    val typography = tokens.typography
 
     var message by rememberSaveable { mutableStateOf("") }
     var instructions by rememberSaveable { mutableStateOf("") }
@@ -114,7 +114,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                     append(", será el activador de la alarma.")
                 }
             },
-            style = UanCardDefaults.bodyStyle.copy(
+            style = typography.general.copy(
                 textAlign = TextAlign.Center
             ),
         )
@@ -131,7 +131,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                     append(" para poder activar la alarma.")
                 }
             },
-            style = UanCardDefaults.bodyStyle.copy(
+            style = typography.general.copy(
                 textAlign = TextAlign.Center
             ),
         )
@@ -160,7 +160,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                     append("breves para el manejo de la crisis.")
                 }
             },
-            style = UanCardDefaults.bodyStyle.copy(
+            style = typography.general.copy(
                 textAlign = TextAlign.Center
             ),
         )

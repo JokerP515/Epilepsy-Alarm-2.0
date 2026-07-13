@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.uan.designsystem.uikit.components.UanButton
 import com.uan.designsystem.uikit.components.UanButtonStyle
-import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 
 @Composable
@@ -17,6 +16,7 @@ fun CustomButton (
 ) {
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val typography = tokens.typography
     UanButton(
         onClick = onClick,
         style = style,
@@ -24,7 +24,7 @@ fun CustomButton (
     ) {
         Text(
             text = text,
-            style = UanCardDefaults.titleStyle,
+            style = typography.component,
             color = colors.onSurface,
         )
     }

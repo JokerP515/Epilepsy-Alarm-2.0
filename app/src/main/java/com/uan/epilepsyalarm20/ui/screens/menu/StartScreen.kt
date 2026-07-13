@@ -23,7 +23,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.theme.imageSize
@@ -34,6 +33,8 @@ fun StartScreen() {
     val context = LocalContext.current
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val typography = tokens.typography
+    val spacing = tokens.spacing
 
     BackHandler {
         val activity = context as? Activity
@@ -51,12 +52,12 @@ fun StartScreen() {
     ) {
         Text(
             text = stringResource(R.string.informacion_inicio_activacion),
-            style = UanCardDefaults.titleStyle,
+            style = typography.component,
             textAlign = TextAlign.Center,
             color = colors.onSurface
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(spacing.md))
 
         Image(
             painter = painterResource(R.drawable.start_screen_logo),

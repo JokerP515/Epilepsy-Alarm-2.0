@@ -26,6 +26,7 @@ fun HeadlineCard(title: String, description: String? = null) {
 
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val typography = tokens.typography
     val borderColor = UanCardDefaults.borderColor(tone = UanTone.Neutral, enabled = true)
     val shape = RoundedCornerShape(UanCardDefaults.cornerRadius)
 
@@ -55,14 +56,14 @@ fun HeadlineCard(title: String, description: String? = null) {
             ) {
                 Text(
                     text = title,
-                    style = UanCardDefaults.titleStyle,
+                    style = typography.component,
                     color = colors.primary,
                     fontWeight = W600
                 )
                 if(description != null) {
                     Text(
                         text = description,
-                        style = UanCardDefaults.bodyStyle,
+                        style = typography.general,
                         color = colors.onSurface,
                         fontWeight = W400
                     )
