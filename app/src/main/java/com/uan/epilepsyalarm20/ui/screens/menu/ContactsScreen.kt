@@ -51,7 +51,7 @@ fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostC
     val spacing = tokens.spacing
 
     BackHandler {
-        navController.navigate(Routes.Config.id)
+        navController.navigateUp()
     }
 
     Box(

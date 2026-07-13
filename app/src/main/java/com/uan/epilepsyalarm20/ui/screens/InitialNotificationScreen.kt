@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.InitialNotificationViewModel
@@ -55,13 +55,12 @@ fun InitialNotificationScreen(
     val userExistsState by mainViewModel.userExists.collectAsState(initial = null)
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val spacing = tokens.spacing
 
     // Determinar la ruta de navegación
     val nextDestination = when (userExistsState) {
         null -> null // Muestra pantalla de carga
-        true ->
-            if (mainViewModel.isEmergencyMethodSaved) Routes.MenuPrincipal
-            else Routes.ConfigAlarma
+        true -> Routes.MenuPrincipal
         else -> Routes.PerfilUsuario
     }
 
@@ -75,22 +74,22 @@ fun InitialNotificationScreen(
                 top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
                 bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
             ),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(spacing.md),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(R.string.titulo_funcionamiento_de_la_aplicacion_epilepsy_alarm),
-            style = MaterialTheme.typography.titleLarge,
+            style = UanCardDefaults.titleStyle,
             color = colors.primary,
             textAlign = TextAlign.Center,
             fontWeight = W700
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(spacing.md))
 
         Text(
             text = stringResource(R.string.Explicacion_Funcionamiento_EPAlarm),
-            style = MaterialTheme.typography.bodyLarge,
+            style = UanCardDefaults.bodyStyle,
             color = colors.onSurface,
             fontWeight = W400
         )
@@ -103,7 +102,7 @@ fun InitialNotificationScreen(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(spacing.md),
             modifier = Modifier
                 .clickable { isChecked = !isChecked }
         ) {
@@ -123,7 +122,7 @@ fun InitialNotificationScreen(
             )
             Text(
                 text = stringResource(R.string.no_volver_a_mostrar_este_mensaje),
-                style = MaterialTheme.typography.bodyLarge,
+                style = UanCardDefaults.bodyStyle,
                 color = colors.onSurface,
                 fontWeight = W600
             )

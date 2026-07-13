@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,14 +21,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.components.UanButton
+import com.uan.designsystem.uikit.components.UanCardDefaults
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.ContactsViewModel
 import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
-import com.uan.epilepsyalarm20.ui.theme.textFieldColors
+import com.uan.epilepsyalarm20.ui.fields.ClickableUanTextField
 
 @Composable
 fun NewContactScreen(contactsViewModel: ContactsViewModel, navController: NavHostController) {
+
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
 
     var name by rememberSaveable { mutableStateOf("") }
     var phoneNumber by rememberSaveable { mutableStateOf("") }
@@ -50,40 +54,38 @@ fun NewContactScreen(contactsViewModel: ContactsViewModel, navController: NavHos
     Box (
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
     ) {
         Column (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(spacing.md),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HeadlineCard(stringResource(R.string.nuevo_contacto_emergencia))
 
-            OutlinedTextField(
+            ClickableUanTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text(stringResource(R.string.nombre_del_contacto_de_emergencia)) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = textFieldColors()
+                label = stringResource(R.string.nombre_del_contacto_de_emergencia),
+                modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
+            ClickableUanTextField(
                 value = phoneNumber,
                 onValueChange = { input ->
                     if (input.all { char -> char.isDigit() }) {
                         phoneNumber = input
                     }
                 },
-                label = { Text(stringResource(R.string.numero_del_contacto_de_emergencia)) },
+                label = stringResource(R.string.numero_del_contacto_de_emergencia),
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = textFieldColors()
             )
         }
 
-        ExtendedFloatingActionButton (
+        UanButton (
             onClick = {
                 val missingFields = checkMissingFields(name, phoneNumber)
                 if (missingFields.isEmpty()) {
@@ -97,12 +99,10 @@ fun NewContactScreen(contactsViewModel: ContactsViewModel, navController: NavHos
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ) {
             Text(
                 text = stringResource(R.string.guardar),
-                style = MaterialTheme.typography.bodyLarge
+                style = UanCardDefaults.bodyStyle
             )
         }
     }

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.components.UanButtonStyle
 import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
@@ -55,6 +56,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
     val context = LocalContext.current
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
+    val spacing = tokens.spacing
 
     var message by rememberSaveable { mutableStateOf("") }
     var instructions by rememberSaveable { mutableStateOf("") }
@@ -92,7 +94,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                         )
                 } else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(spacing.md),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -188,6 +190,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             CustomButton(
                 modifier = Modifier.padding(8.dp),
                 text = stringResource(R.string.guardar),
+                style = UanButtonStyle.Secondary
             ){
                 if(message.isNotEmpty()){
                     viewModel.updateEmergencyMessage(message)
