@@ -74,10 +74,14 @@ class EmergencyViewModel @Inject constructor(
             launch {
                 emergencyRepository.getEmergencyContacts().collect { contacts ->
                     _emergencyContacts.value = contacts
+                    _isAnyEmergencyContact.value = contacts.isNotEmpty()
+                    if (contacts.isNotEmpty()) {
+                        preferencesManager.saveIsAnyContact()
+                    } else {
+                        preferencesManager.allContactsDeleted()
+                    }
+                    preferencesManager.saveContactCount(contacts.size)
                 }
-            }
-            launch {
-                _isAnyEmergencyContact.value = preferencesManager.getIsAnyContact()
             }
         }
     }
@@ -178,7 +182,7 @@ class EmergencyViewModel @Inject constructor(
                 val contacts = emergencyContacts.value
                 _isEmergencyActive.value = true
 
-                if (userEntity != null && location != null) {
+                if (userEntity != null) {
                     val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia."
 
                     contacts.forEach { contact ->
