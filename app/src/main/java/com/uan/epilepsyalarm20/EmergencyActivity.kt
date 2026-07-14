@@ -26,6 +26,9 @@ class EmergencyActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val windowInsetsController = androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.isAppearanceLightStatusBars = false
+
         // Configuración de la pantalla para que aparezca sobre la pantalla de bloqueo
         window.addFlags(
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
