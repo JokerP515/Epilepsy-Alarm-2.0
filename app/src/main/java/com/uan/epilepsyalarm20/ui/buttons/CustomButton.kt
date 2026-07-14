@@ -12,6 +12,7 @@ fun CustomButton (
     modifier: Modifier = Modifier,
     text: String,
     style: UanButtonStyle = UanButtonStyle.Primary,
+    enabled: Boolean = true,
     onClick: () -> Unit = {},
 ) {
     val tokens = UanThemeTokens.current
@@ -21,11 +22,12 @@ fun CustomButton (
         onClick = onClick,
         style = style,
         modifier = modifier,
+        enabled = enabled
     ) {
         Text(
             text = text,
             style = typography.component,
-            color = colors.onSurface,
+            color = if (enabled) colors.onSurface else colors.onSurface.copy(alpha = 0.5f)
         )
     }
 }

@@ -2,7 +2,6 @@ package com.uan.epilepsyalarm20.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,15 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
-import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.uan.designsystem.uikit.components.UanModal
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.InitialNotificationViewModel
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
+import com.uan.epilepsyalarm20.ui.cards.TermsAndConditions
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
 
@@ -50,7 +51,9 @@ fun InitialNotificationScreen(
     mainViewModel: MainViewModel,
     go: (Any) -> Unit
 ) {
-    var isChecked by rememberSaveable { mutableStateOf(false) }
+    var termsAccepted by rememberSaveable { mutableStateOf(false) }
+    var showTermsUanModel by rememberSaveable { mutableStateOf(false) }
+
     val userExistsState by mainViewModel.userExists.collectAsState(initial = null)
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
@@ -102,38 +105,55 @@ fun InitialNotificationScreen(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.md),
-            modifier = Modifier
-                .clickable { isChecked = !isChecked }
+            modifier = Modifier.clickable { showTermsUanModel = true }
         ) {
-            Box( // Checkbox custom para selector redondo
+            Box(
                 modifier = Modifier
-                    .size(24.dp)
-                    .border(
-                        width = 2.dp,
-                        color = colors.onSurface,
-                        shape = CircleShape
-                    )
+                    .size(16.dp)
                     .background(
-                        color = if (isChecked) colors.primary else colors.background,
-                        shape = CircleShape
+                        if (termsAccepted) colors.primary else colors.onSurface.copy(alpha = 0.5f),
+                        CircleShape
                     )
-                    .clickable { isChecked = !isChecked }
             )
             Text(
-                text = stringResource(R.string.no_volver_a_mostrar_este_mensaje),
+                text = stringResource(R.string.aceptar_terminos_condiciones),
+                modifier = Modifier.padding(start = spacing.sm),
                 style = typography.general,
-                color = colors.onSurface,
-                fontWeight = W600
+                color = colors.primary
             )
         }
 
         CustomButton(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.iniciar)
+            text = stringResource(R.string.iniciar),
+            enabled = termsAccepted
         ) {
-            if (isChecked) initialNotificationViewModel.notShowAgain()
+            if (termsAccepted) initialNotificationViewModel.notShowAgain()
             if (nextDestination != null) go(nextDestination)
+        }
+    }
+
+    if (showTermsUanModel) {
+        UanModal(
+            visible = true,
+            onDismissRequest = { showTermsUanModel = false },
+            title = stringResource(R.string.titulo_terminos_condiciones),
+            showCloseButton = true,
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.6f)
+                .padding(horizontal = spacing.md)
+        ) {
+            TermsAndConditions(
+                onAccept = {
+                    termsAccepted = true
+                    showTermsUanModel = false
+                },
+                onDismiss = {
+                    termsAccepted = false
+                    showTermsUanModel = false
+                }
+            )
         }
     }
 }
