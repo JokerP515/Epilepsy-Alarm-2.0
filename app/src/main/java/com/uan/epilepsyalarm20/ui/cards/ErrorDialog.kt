@@ -1,8 +1,6 @@
 package com.uan.epilepsyalarm20.ui.cards
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.uan.designsystem.uikit.components.UanModal
 import com.uan.designsystem.uikit.components.UanModalAction
