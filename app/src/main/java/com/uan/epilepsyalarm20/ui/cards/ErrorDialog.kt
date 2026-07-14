@@ -1,27 +1,30 @@
 package com.uan.epilepsyalarm20.ui.cards
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.uan.designsystem.uikit.components.UanModal
+import com.uan.designsystem.uikit.components.UanModalAction
+import com.uan.designsystem.uikit.components.UanButtonStyle
+import com.uan.epilepsyalarm20.R
 
 @Composable
-fun ErrorDialog(errorMessages: List<String>, onDismiss: () -> Unit) {
-    AlertDialog(
+fun ErrorDialog(
+    errorMessages: List<String>,
+    onDismiss: () -> Unit
+) {
+    val message = errorMessages.joinToString(separator = "\n") { "• $it" }
+
+    UanModal(
+        visible = true,
         onDismissRequest = onDismiss,
-        title = { Text(text = "Falta la siguiente información:") },
-        text = {
-            Column {
-                errorMessages.forEach { error ->
-                    Text(text = "- $error")
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Aceptar")
-            }
-        }
+        title = stringResource(R.string.falta_la_siguiente_informacion),
+        body = message,
+        primaryAction = UanModalAction(
+            label = "Aceptar",
+            onClick = onDismiss,
+            style = UanButtonStyle.Primary
+        )
     )
 }
