@@ -29,6 +29,11 @@ import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.fields.ClickableUanTextField
 
+@Deprecated(
+    message = "NewContactScreen is replaced by system contact selector",
+    replaceWith = ReplaceWith("ContactsScreen"),
+    level = DeprecationLevel.WARNING
+)
 @Composable
 fun NewContactScreen(contactsViewModel: ContactsViewModel, navController: NavHostController) {
 

@@ -160,7 +160,9 @@ class EmergencyViewModel @Inject constructor(
 
     @RequiresPermission(allOf = [Manifest.permission.READ_PHONE_STATE, Manifest.permission.SEND_SMS])
     fun sendPreparedMessage(phoneNumber: String, emergencyMessage: String, location: String) {
-        messageRepository.sendSms("+57$phoneNumber", emergencyMessage, location)
+        val hasPlus = phoneNumber.startsWith("+")
+        val preparedPhoneNumber = if (hasPlus) phoneNumber else "+57$phoneNumber"
+        messageRepository.sendSms(preparedPhoneNumber, emergencyMessage, location)
     }
 
     @RequiresPermission(allOf = [
