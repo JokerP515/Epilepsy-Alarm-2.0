@@ -35,7 +35,8 @@ class MainActivity : ComponentActivity() {
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
         android.Manifest.permission.SEND_SMS,
         android.Manifest.permission.READ_PHONE_STATE,
-        android.Manifest.permission.CAMERA
+        android.Manifest.permission.CAMERA,
+        android.Manifest.permission.READ_CONTACTS
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

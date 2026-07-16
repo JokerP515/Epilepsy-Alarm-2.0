@@ -1,6 +1,9 @@
 package com.uan.epilepsyalarm20.ui.screens.menu
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -34,11 +38,29 @@ import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.ContactsViewModel
 import com.uan.epilepsyalarm20.ui.cards.ContactCard
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
-import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
+import com.uan.epilepsyalarm20.utils.getContactFromUri
 import kotlinx.coroutines.launch
 
 @Composable
 fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostController) {
+    val context = LocalContext.current
+
+    val pickContactLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickContact()
+    ) { uri ->
+
+        uri ?: return@rememberLauncherForActivityResult
+
+        val contact = getContactFromUri(context, uri)
+
+        if (contact != null) {
+            contactsViewModel.insertEmergencyContact(
+                contact.first,
+                contact.second
+            )
+        }
+    }
+
     val listContacts = contactsViewModel.emergencyContactsFlow.collectAsState(initial = emptyList())
     val currentCount by contactsViewModel.currentCount.collectAsState()
 
@@ -94,7 +116,7 @@ fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostC
                 .size(56.dp),
             onClick = {
                 if (currentCount < contactsViewModel.limit) {
-                    navController.navigate(Routes.NuevoContacto.id)
+                    pickContactLauncher.launch()
                 } else showErrorMessage = true
             },
             containerColor = colors.primary,
