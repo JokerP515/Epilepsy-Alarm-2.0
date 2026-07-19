@@ -23,5 +23,6 @@ data class EmergencyContactEntity(
     val id: Long = 0,
     val userId: Long,
     val name: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val isConfirmed: Boolean = false
 )

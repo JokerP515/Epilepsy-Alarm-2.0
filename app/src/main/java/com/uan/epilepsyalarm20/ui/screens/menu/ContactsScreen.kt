@@ -36,13 +36,21 @@ import com.uan.designsystem.uikit.foundation.UanIconButton
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.ContactsViewModel
+import com.uan.epilepsyalarm20.domain.models.EmergencyViewModel
 import com.uan.epilepsyalarm20.ui.cards.ContactCard
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.utils.getContactFromUri
 import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
+import android.Manifest
+import android.content.pm.PackageManager
 
 @Composable
-fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostController) {
+fun ContactsScreen(
+    contactsViewModel: ContactsViewModel,
+    emergencyViewModel: EmergencyViewModel,
+    navController: NavHostController
+) {
     val context = LocalContext.current
 
     val pickContactLauncher = rememberLauncherForActivityResult(
@@ -101,6 +109,20 @@ fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostC
                         onDelete = { contactsViewModel.deleteEmergencyContact(contact) },
                         onUpdate = { updatedContact ->
                             contactsViewModel.updateEmergencyContact(updatedContact)
+                        },
+                        onSendSms = { phone ->
+                            val hasSmsPermission = ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.SEND_SMS
+                            ) == PackageManager.PERMISSION_GRANTED
+
+                            if (hasSmsPermission) {
+                                emergencyViewModel.sendPreparedMessage(
+                                    phoneNumber = phone,
+                                    emergencyMessage = "Mensaje de confirmación envío de alerta del aplicativo Epilepsy Alarm",
+                                    location = ""
+                                )
+                            }
                         }
                     )
                 }

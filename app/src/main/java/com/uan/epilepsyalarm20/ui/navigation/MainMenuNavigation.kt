@@ -91,7 +91,7 @@ fun MainMenuNavigation(navController: NavHostController) {
                     navController = navController,
                     boolean = true
                 ) }
-                composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(), navController) }
+                composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(),emergencyViewModel = hiltViewModel(), navController) }
                 composable(Routes.NuevoContacto.id) { NewContactScreen(hiltViewModel(), navController) }
                 composable(Routes.Informacion.id) { InformationScreen(navController) }
                 composable(Routes.Config.id) { ConfigurationScreen(navController) }

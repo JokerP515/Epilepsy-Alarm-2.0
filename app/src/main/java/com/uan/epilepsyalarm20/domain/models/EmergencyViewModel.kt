@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -89,6 +90,10 @@ class EmergencyViewModel @Inject constructor(
     suspend fun getUser() = userRepository.getUser()
 
     suspend fun getFirstEmergencyContact() = emergencyRepository.getFirstEmergencyContact()
+
+    suspend fun getFirstConfirmedContact(): EmergencyContactEntity? {
+        return emergencyRepository.getEmergencyContacts().first().find { it.isConfirmed }
+    }
 
     fun getUserInstructions(): String? {
         return user.value?.instruccionesEmergencia
@@ -188,7 +193,9 @@ class EmergencyViewModel @Inject constructor(
                     val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia."
 
                     contacts.forEach { contact ->
-                        sendPreparedMessage(contact.phoneNumber, message, location)
+                        if(contact.isConfirmed){
+                            sendPreparedMessage(contact.phoneNumber, message, location)
+                        }
                     }
                 }
             }
