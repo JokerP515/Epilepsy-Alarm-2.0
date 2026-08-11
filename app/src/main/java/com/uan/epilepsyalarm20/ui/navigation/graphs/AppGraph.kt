@@ -31,6 +31,7 @@ fun NavGraphBuilder.appGraph(
             RegisterScreen(
                 registerViewModel = hiltViewModel(),
                 contactsViewModel = hiltViewModel(),
+                emergencyViewModel = hiltViewModel(),
                 go = go
             )
         }
