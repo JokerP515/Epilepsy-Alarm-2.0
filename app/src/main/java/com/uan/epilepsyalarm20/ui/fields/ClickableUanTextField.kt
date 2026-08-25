@@ -2,6 +2,7 @@ package com.uan.epilepsyalarm20.ui.fields
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,6 +19,7 @@ fun ClickableUanTextField(
     label: String,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     readOnly: Boolean = false,
     placeholder: String ?= null
 ) {
@@ -36,6 +38,7 @@ fun ClickableUanTextField(
                 focusRequester.requestFocus()
             },
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         readOnly = readOnly,
         placeholder = placeholder
     )

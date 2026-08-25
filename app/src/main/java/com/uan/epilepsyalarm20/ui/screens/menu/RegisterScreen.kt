@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHost
@@ -34,10 +35,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -76,6 +80,7 @@ fun RegisterScreen(
     boolean: Boolean = false
 ) {
 
+    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
@@ -217,6 +222,9 @@ fun RegisterScreen(
             onValueChange = { registerViewModel.name = it },
             label = stringResource(R.string.nombre),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Next) })
         )
 
         ClickableUanTextField(
@@ -224,6 +232,9 @@ fun RegisterScreen(
             onValueChange = { registerViewModel.lastName = it },
             label = stringResource(R.string.apellido),
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Next) })
         )
 
         // Tipo de sangre
@@ -253,7 +264,11 @@ fun RegisterScreen(
             },
             label = stringResource(R.string.documento),
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() })
         )
 
         if(!boolean) {
@@ -343,7 +358,7 @@ fun RegisterScreen(
         CustomButton(
             modifier = Modifier.fillMaxWidth(),
             text = if(!boolean) stringResource(R.string.continuar) else stringResource(R.string.guardar),
-            enabled = contact?.isConfirmed ?: true
+            enabled = contact?.isConfirmed ?: boolean
         ) {
             val missingFields = checkMissingFields(
                 registerViewModel.name,
@@ -420,7 +435,7 @@ fun checkMissingFields(
 
 fun checkMissingFieldsContact(name: String, phoneNumber: String): List<String> {
     val missing = mutableListOf<String>()
-    if(name.isBlank()) missing.add("Nombre del Contacto de Emergencia")
-    if(phoneNumber.isBlank()) missing.add("Número del Contacto de Emergencia")
+    if(name.isBlank() || phoneNumber.isBlank())
+        missing.add("Contacto de emergencia")
     return missing
 }
