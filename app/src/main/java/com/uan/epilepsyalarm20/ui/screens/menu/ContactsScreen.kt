@@ -64,7 +64,8 @@ fun ContactsScreen(
         if (contact != null) {
             contactsViewModel.insertEmergencyContact(
                 contact.first,
-                contact.second
+                contact.second,
+                false
             )
         }
     }

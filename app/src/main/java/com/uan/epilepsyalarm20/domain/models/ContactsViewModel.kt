@@ -29,22 +29,6 @@ class ContactsViewModel @Inject constructor(
             initialValue = 0
         )
 
-    fun insertEmergencyContact(name: String, phoneNumber: String): Boolean {
-        return if (currentCount.value < limit) {
-            val contact = EmergencyContactEntity(
-                userId = 1,
-                name = name,
-                phoneNumber = phoneNumber
-            )
-            viewModelScope.launch {
-                contactsRepository.insertEmergencyContact(contact)
-            }
-            true
-        } else {
-            false
-        }
-    }
-
     fun insertEmergencyContact(name: String, phoneNumber: String, isConfirmed: Boolean): Boolean {
         return if (currentCount.value < limit) {
             val contact = EmergencyContactEntity(
