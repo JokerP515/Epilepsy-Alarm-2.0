@@ -7,12 +7,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 
 @Composable
-@Preview(showBackground = true)
 fun LoadingScreen() {
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
