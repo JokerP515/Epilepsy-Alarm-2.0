@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,11 +30,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -52,6 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Unit = {}, boolean: Boolean = false, viewModel: StartViewModel = hiltViewModel()){
 
+    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val tokens = UanThemeTokens.current
     val colors = tokens.colors
@@ -171,7 +177,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             onValueChange = { message = it},
             label = stringResource(R.string.mensaje_de_alerta),
             placeholder = stringResource(R.string.explicacion_mensaje_alerta),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Next) })
         )
 
         ClickableUanTextField(
@@ -179,7 +188,9 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             onValueChange = { instructions = it },
             label = stringResource(R.string.instrucciones_o_datos_adicionales),
             placeholder = stringResource(R.string.explicacion_instrucciones_o_datos_adicionales),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() })
         )
 
         Column (
@@ -241,5 +252,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             showSuccessMessage = false // Ocultar el mensaje después de mostrarlo
         }
     }
-    SnackbarHost(hostState = snackbarHostState)
+    SnackbarHost(
+        hostState = snackbarHostState,
+        modifier = Modifier.padding(
+            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+        )
+    )
 }

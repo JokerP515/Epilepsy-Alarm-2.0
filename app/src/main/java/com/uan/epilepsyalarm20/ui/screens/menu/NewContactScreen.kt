@@ -94,7 +94,7 @@ fun NewContactScreen(contactsViewModel: ContactsViewModel, navController: NavHos
             onClick = {
                 val missingFields = checkMissingFields(name, phoneNumber)
                 if (missingFields.isEmpty()) {
-                    contactsViewModel.insertEmergencyContact(name, phoneNumber)
+                    contactsViewModel.insertEmergencyContact(name, phoneNumber, false)
                     navController.navigateUp()
                 } else {
                     errorMessages = missingFields

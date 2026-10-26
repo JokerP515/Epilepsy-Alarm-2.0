@@ -12,14 +12,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uan.designsystem.uikit.components.UanCardDefaults
 import com.uan.designsystem.uikit.foundation.UanIconButton
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 
 @Composable
-@Preview
 fun FloatingBottomMenu(
     modifier: Modifier = Modifier,
     onPauseClick: () -> Unit = {},
