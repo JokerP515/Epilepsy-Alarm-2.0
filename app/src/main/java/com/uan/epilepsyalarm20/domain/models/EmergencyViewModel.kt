@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -74,10 +75,14 @@ class EmergencyViewModel @Inject constructor(
             launch {
                 emergencyRepository.getEmergencyContacts().collect { contacts ->
                     _emergencyContacts.value = contacts
+                    _isAnyEmergencyContact.value = contacts.isNotEmpty()
+                    if (contacts.isNotEmpty()) {
+                        preferencesManager.saveIsAnyContact()
+                    } else {
+                        preferencesManager.allContactsDeleted()
+                    }
+                    preferencesManager.saveContactCount(contacts.size)
                 }
-            }
-            launch {
-                _isAnyEmergencyContact.value = preferencesManager.getIsAnyContact()
             }
         }
     }
@@ -85,6 +90,10 @@ class EmergencyViewModel @Inject constructor(
     suspend fun getUser() = userRepository.getUser()
 
     suspend fun getFirstEmergencyContact() = emergencyRepository.getFirstEmergencyContact()
+
+    suspend fun getFirstConfirmedContact(): EmergencyContactEntity? {
+        return emergencyRepository.getEmergencyContacts().first().find { it.isConfirmed }
+    }
 
     fun getUserInstructions(): String? {
         return user.value?.instruccionesEmergencia
@@ -156,7 +165,9 @@ class EmergencyViewModel @Inject constructor(
 
     @RequiresPermission(allOf = [Manifest.permission.READ_PHONE_STATE, Manifest.permission.SEND_SMS])
     fun sendPreparedMessage(phoneNumber: String, emergencyMessage: String, location: String) {
-        messageRepository.sendSms("+57$phoneNumber", emergencyMessage, location)
+        val hasPlus = phoneNumber.startsWith("+")
+        val preparedPhoneNumber = if (hasPlus) phoneNumber else "+57$phoneNumber"
+        messageRepository.sendSms(preparedPhoneNumber, emergencyMessage, location)
     }
 
     @RequiresPermission(allOf = [
@@ -178,11 +189,13 @@ class EmergencyViewModel @Inject constructor(
                 val contacts = emergencyContacts.value
                 _isEmergencyActive.value = true
 
-                if (userEntity != null && location != null) {
+                if (userEntity != null) {
                     val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia."
 
                     contacts.forEach { contact ->
-                        sendPreparedMessage(contact.phoneNumber, message, location)
+                        if(contact.isConfirmed){
+                            sendPreparedMessage(contact.phoneNumber, message, location)
+                        }
                     }
                 }
             }

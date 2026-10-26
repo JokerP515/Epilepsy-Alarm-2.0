@@ -7,16 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,18 +23,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.uan.designsystem.uikit.components.UanButtonStyle
+import com.uan.designsystem.uikit.components.UanCard
+import com.uan.designsystem.uikit.components.UanModal
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 
 @Composable
 fun ContactCard(
     contact: EmergencyContactEntity,
     onUpdate: (EmergencyContactEntity) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onSendSms: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
 
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -49,80 +55,116 @@ fun ContactCard(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground
+            tint = colors.onSurface
         )
 
-        OutlinedCard(
+        UanCard(
+            title = contact.name,
+            body = if (expanded) "Teléfono: ${contact.phoneNumber} ${if (!contact.isConfirmed) "\nEstado: Sin confirmar" else ""}" else null,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp) // Separación entre ícono y card
+                .padding(start = spacing.sm)
                 .animateContentSize(),
-        ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = contact.name,
-                    style = MaterialTheme.typography.titleLarge
-                )
-
+            footer = {
                 if (expanded) {
-                    Text(
-                        text = "Teléfono: ${contact.phoneNumber}",
-                        style = MaterialTheme.typography.titleLarge
-                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        Button (
-                            onClick = { showDialog = true },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(0.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        ){
-                            Text(
+                        horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                    ) {
+                        if (contact.isConfirmed) {
+                            CustomButton(
                                 text = stringResource(R.string.modificar),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button (
-                            onClick = { onDelete() },
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(0.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error,
-                                contentColor = MaterialTheme.colorScheme.onError
-                            )
-                        ){
-                            Text(
+                                modifier = Modifier.weight(1f)
+                            ) { showEditDialog = true }
+                            CustomButton(
                                 text = stringResource(R.string.eliminar),
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                                modifier = Modifier.weight(1f),
+                                style = UanButtonStyle.Danger
+                            ) { onDelete() }
+                        } else {
+                            CustomButton(
+                                text = stringResource(R.string.confirmar),
+                                modifier = Modifier.weight(1f),
+                                style = UanButtonStyle.Warning
+                            ) {
+                                onSendSms(contact.phoneNumber)
+                                showConfirmationDialog = true
+                            }
+                            CustomButton(
+                                text = stringResource(R.string.eliminar),
+                                modifier = Modifier.weight(1f),
+                                style = UanButtonStyle.Danger
+                            ) { onDelete() }
                         }
                     }
                 }
             }
-        }
+        )
     }
 
-    if (showDialog) {
+    if (showEditDialog) {
         ContactDialog(
             isEditing = true,
             initialName = contact.name,
             initialPhone = contact.phoneNumber,
-            onDismiss = { showDialog = false },
+            onDismiss = { showEditDialog = false },
             onConfirm = { updatedContact ->
-                onUpdate(contact.copy(name = updatedContact.name, phoneNumber = updatedContact.phoneNumber))
-                showDialog = false
+                onUpdate(
+                    contact.copy(
+                        name = updatedContact.name,
+                        phoneNumber = updatedContact.phoneNumber
+                    )
+                )
+                showEditDialog = false
             }
         )
     }
 
+    if (showConfirmationDialog) {
+        UanModal(
+            modifier = Modifier.wrapContentHeight(),
+            visible = true,
+            showCloseButton = true,
+            onDismissRequest = { showConfirmationDialog = false },
+            title = stringResource(R.string.titulo_confirmar_contacto),
+            media = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(spacing.sm),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
+                    Text(
+                        text = stringResource(R.string.confirmar_contacto),
+                        style = tokens.typography.body
+                    )
+
+                    Spacer(modifier = Modifier.height(spacing.xs))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                    ) {
+                        CustomButton(
+                            text = stringResource(R.string.aceptar),
+                            modifier = Modifier.weight(1f),
+                            style = UanButtonStyle.Success
+                        ) {
+                            onUpdate(contact.copy(isConfirmed = true))
+                            showConfirmationDialog = false
+                        }
+                        CustomButton(
+                            text = stringResource(R.string.modificar),
+                            modifier = Modifier.weight(1f),
+                            style = UanButtonStyle.Primary
+                        ) {
+                            showConfirmationDialog = false
+                            showEditDialog = true
+                        }
+                    }
+                }
+            }
+        )
+    }
 }
 

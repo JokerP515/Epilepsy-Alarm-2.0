@@ -1,18 +1,21 @@
 package com.uan.epilepsyalarm20.ui.screens.menu
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -25,18 +28,48 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.foundation.UanIconButton
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.ContactsViewModel
+import com.uan.epilepsyalarm20.domain.models.EmergencyViewModel
 import com.uan.epilepsyalarm20.ui.cards.ContactCard
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
-import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
+import com.uan.epilepsyalarm20.utils.getContactFromUri
 import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
+import android.Manifest
+import android.content.pm.PackageManager
 
 @Composable
-fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostController) {
+fun ContactsScreen(
+    contactsViewModel: ContactsViewModel,
+    emergencyViewModel: EmergencyViewModel,
+    navController: NavHostController
+) {
+    val context = LocalContext.current
+
+    val pickContactLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickContact()
+    ) { uri ->
+
+        uri ?: return@rememberLauncherForActivityResult
+
+        val contact = getContactFromUri(context, uri)
+
+        if (contact != null) {
+            contactsViewModel.insertEmergencyContact(
+                contact.first,
+                contact.second,
+                false
+            )
+        }
+    }
+
     val listContacts = contactsViewModel.emergencyContactsFlow.collectAsState(initial = emptyList())
     val currentCount by contactsViewModel.currentCount.collectAsState()
 
@@ -44,27 +77,31 @@ fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostC
     var showErrorMessage by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
+
     BackHandler {
-        navController.navigate(Routes.Config.id)
+        navController.navigateUp()
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(spacing.md),
+            verticalArrangement = Arrangement.spacedBy(spacing.md),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HeadlineCard(stringResource(R.string.contactos_de_emergencia))
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(spacing.sm)
             ) {
                 items(listContacts.value.size) { index ->
                     val contact = listContacts.value[index]
@@ -73,6 +110,20 @@ fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostC
                         onDelete = { contactsViewModel.deleteEmergencyContact(contact) },
                         onUpdate = { updatedContact ->
                             contactsViewModel.updateEmergencyContact(updatedContact)
+                        },
+                        onSendSms = { phone ->
+                            val hasSmsPermission = ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.SEND_SMS
+                            ) == PackageManager.PERMISSION_GRANTED
+
+                            if (hasSmsPermission) {
+                                emergencyViewModel.sendPreparedMessage(
+                                    phoneNumber = phone,
+                                    emergencyMessage = "Mensaje de confirmación envío de alerta del aplicativo Epilepsy Alarm",
+                                    location = ""
+                                )
+                            }
                         }
                     )
                 }
@@ -80,21 +131,24 @@ fun ContactsScreen(contactsViewModel: ContactsViewModel, navController: NavHostC
         }
 
         // FAB flotando abajo a la derecha
-        FloatingActionButton(
-            onClick = {
-                if (currentCount < contactsViewModel.limit) {
-                    navController.navigate(Routes.NuevoContacto.id)
-                } else showErrorMessage = true
-            },
+        UanIconButton(
+            contentDescription = "Agregar nuevo contacto",
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                .padding(spacing.sm)
+                .size(56.dp),
+            onClick = {
+                if (currentCount < contactsViewModel.limit) {
+                    pickContactLauncher.launch()
+                } else showErrorMessage = true
+            },
+            containerColor = colors.primary,
+            shape = RoundedCornerShape(spacing.sm)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = null
+                contentDescription = null,
+                tint = colors.onSurface
             )
         }
     }

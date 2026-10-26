@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.theme.imageSize
 import com.uan.epilepsyalarm20.utils.EmergencyLauncher
@@ -31,6 +31,10 @@ import com.uan.epilepsyalarm20.utils.EmergencyLauncher
 @Composable
 fun StartScreen() {
     val context = LocalContext.current
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val typography = tokens.typography
+    val spacing = tokens.spacing
 
     BackHandler {
         val activity = context as? Activity
@@ -40,7 +44,7 @@ fun StartScreen() {
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
@@ -48,16 +52,16 @@ fun StartScreen() {
     ) {
         Text(
             text = stringResource(R.string.informacion_inicio_activacion),
-            style = MaterialTheme.typography.titleLarge,
+            style = typography.component,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground
+            color = colors.onSurface
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(spacing.md))
 
         Image(
             painter = painterResource(R.drawable.start_screen_logo),
-            contentDescription = "Logo Epilepsy Alarm",
+            contentDescription = stringResource(R.string.logo_epilepsy_alarm),
             modifier = Modifier
                 .size(imageSize())
                 .clickable {

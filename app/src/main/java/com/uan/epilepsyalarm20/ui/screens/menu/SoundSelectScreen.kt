@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -40,12 +38,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.domain.models.SoundSelectViewModel
 import com.uan.epilepsyalarm20.domain.models.Sounds
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
 import com.uan.epilepsyalarm20.ui.cards.ErrorDialog
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
 import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
@@ -76,6 +74,10 @@ fun SoundSelectScreen(
         }
     }
 
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val typography = tokens.typography
+    val spacing = tokens.spacing
     val sounds = Sounds.entries
     var selectedSound by rememberSaveable { mutableStateOf(sounds.first()) }
     val isPlaying by soundSelectViewModel.isPlaying.collectAsState()
@@ -97,7 +99,7 @@ fun SoundSelectScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
@@ -110,7 +112,7 @@ fun SoundSelectScreen(
                 }
                 else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(spacing.xs),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeadlineCard(
@@ -119,23 +121,23 @@ fun SoundSelectScreen(
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("Selecciona el ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("sonido")
                 }
-                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle (style = SpanStyle(color = colors.onSurface)) {
                     append(" de la ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("alarma")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append(".")
                 }
             },
-            style = MaterialTheme.typography.titleLarge.copy(
+            style = typography.component.copy(
                 textAlign = TextAlign.Center
             ),
         )
@@ -148,7 +150,9 @@ fun SoundSelectScreen(
             onOptionSelected= {selectedSound = it}
         )
 
-        CustomButton(text = if(isPlaying) stringResource(R.string.detener_alarma_seleccionada) else stringResource(
+        CustomButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = if(isPlaying) stringResource(R.string.detener_alarma_seleccionada) else stringResource(
             R.string.reproducir_alarma_seleccionada
         )) {
             soundSelectViewModel.togglePlayStop(selectedSound)
@@ -164,12 +168,10 @@ fun SoundSelectScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CustomButton2(
-                text = stringResource(R.string.atras),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
+                text = stringResource(R.string.atras)
             ){
                 if(navController != null) {
                     navController.navigateUp()
@@ -178,12 +180,10 @@ fun SoundSelectScreen(
                 }
             }
 
-            CustomButton2(
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
                 text = stringResource(R.string.finalizar),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
             ){
                 if(isSoundSelected(selectedSound)){
                     soundSelectViewModel.stopAudio()

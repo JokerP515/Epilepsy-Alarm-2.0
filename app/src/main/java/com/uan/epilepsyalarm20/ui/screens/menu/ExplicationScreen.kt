@@ -15,13 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,29 +30,39 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.uan.designsystem.uikit.components.UanButtonStyle
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.StartViewModel
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 import com.uan.epilepsyalarm20.ui.cards.HeadlineCard
+import com.uan.epilepsyalarm20.ui.fields.ClickableUanTextField
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
-import com.uan.epilepsyalarm20.ui.theme.textFieldColors
 import kotlinx.coroutines.launch
 
 @Composable
 fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Unit = {}, boolean: Boolean = false, viewModel: StartViewModel = hiltViewModel()){
 
+    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
+    val typography = tokens.typography
 
     var message by rememberSaveable { mutableStateOf("") }
     var instructions by rememberSaveable { mutableStateOf("") }
@@ -79,7 +87,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colors.background)
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
@@ -92,7 +100,7 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                         )
                 } else Modifier
             ),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(spacing.md),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -102,96 +110,98 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("El botón de ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("subir volumen")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append(", será el activador de la alarma.")
                 }
             },
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = typography.general.copy(
                 textAlign = TextAlign.Center
             ),
         )
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("Debes mantener presionado el botón de ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("subir volumen")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append(" para poder activar la alarma.")
                 }
             },
-            style = MaterialTheme.typography.titleMedium.copy(
+            style = typography.general.copy(
                 textAlign = TextAlign.Center
             ),
         )
 
         Image(
             painter = painterResource(R.drawable.holding_phone_adjusted),
-            contentDescription = "Sosteniendo teléfono",
+            contentDescription = stringResource(R.string.sosteniendo_telefono),
             modifier = Modifier.size(imageSize())
         )
 
         BasicText(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("Escribe un ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("mensaje personalizado ")
                 }
-                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle (style = SpanStyle(color = colors.onSurface)) {
                     append("que se enviará al activar la alarma e incluye ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                withStyle(style = SpanStyle(color = colors.primary)) {
                     append("instrucciones ")
                 }
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                withStyle(style = SpanStyle(color = colors.onSurface)) {
                     append("breves para el manejo de la crisis.")
                 }
             },
-            style = MaterialTheme.typography.bodyLarge.copy(
+            style = typography.general.copy(
                 textAlign = TextAlign.Center
             ),
         )
 
-        // Mensajes de configuración del mensaje
-        OutlinedTextField(
+        // Mensajes de configuración de alarma
+        ClickableUanTextField(
             value = message,
             onValueChange = { message = it},
-            label = { Text(stringResource(R.string.mensaje_de_alerta)) },
-            placeholder = { Text(text = stringResource(R.string.explicacion_mensaje_alerta)) },
-            colors = textFieldColors(),
-            modifier = Modifier.fillMaxWidth()
+            label = stringResource(R.string.mensaje_de_alerta),
+            placeholder = stringResource(R.string.explicacion_mensaje_alerta),
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Next) })
         )
 
-        OutlinedTextField(
+        ClickableUanTextField(
             value = instructions,
             onValueChange = { instructions = it },
-            label = { Text(stringResource(R.string.instrucciones_o_datos_adicionales)) },
-            placeholder = { Text(text = stringResource(R.string.explicacion_instrucciones_o_datos_adicionales)) },
-            colors = textFieldColors(),
-            modifier = Modifier.fillMaxWidth()
+            label = stringResource(R.string.instrucciones_o_datos_adicionales),
+            placeholder = stringResource(R.string.explicacion_instrucciones_o_datos_adicionales),
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() })
         )
 
         Column (
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.End
         ) {
-            CustomButton2(
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
                 text = stringResource(R.string.guardar),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    contentColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                style = UanButtonStyle.Secondary
             ){
                 if(message.isNotEmpty()){
                     viewModel.updateEmergencyMessage(message)
@@ -207,12 +217,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CustomButton2(
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
                 text = stringResource(R.string.atras),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
             ){
                 if(!boolean) {
                     go(Routes.PerfilUsuario)
@@ -221,12 +229,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
                 }
             }
 
-            CustomButton2(
-                text = stringResource(R.string.siguiente),
-                color = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
+            // Posible Color inverso
+            CustomButton(
+                modifier = Modifier.padding(8.dp),
+                text = stringResource(R.string.siguiente)
             ){
                 if(navController != null) {
                     navController.navigate(Routes.ConfigSonidoAlarma.id)
@@ -246,5 +252,10 @@ fun ExplicationScreen(navController: NavHostController? = null, go: (Any) -> Uni
             showSuccessMessage = false // Ocultar el mensaje después de mostrarlo
         }
     }
-    SnackbarHost(hostState = snackbarHostState)
+    SnackbarHost(
+        hostState = snackbarHostState,
+        modifier = Modifier.padding(
+            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+        )
+    )
 }

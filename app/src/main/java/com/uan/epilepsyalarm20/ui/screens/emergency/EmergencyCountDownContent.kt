@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,9 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.domain.models.EmergencyViewModel
-import com.uan.epilepsyalarm20.ui.buttons.CustomButton2
+import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 
 @Composable
 fun EmergencyCountDownContent(
@@ -38,10 +37,15 @@ fun EmergencyCountDownContent(
     context: Context,
     countdown: Int
 ){
+    val tokens = UanThemeTokens.current
+    val colors = tokens.colors
+    val spacing = tokens.spacing
+    val typography = tokens.typography
+    
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(colors.background)
             .padding(16.dp)
             .padding(paddingValues)
             .verticalScroll(rememberScrollState()),
@@ -50,42 +54,40 @@ fun EmergencyCountDownContent(
     ){
         Text(
             text = stringResource(R.string.quedan),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            style = typography.alert,
+            color = colors.onSurface,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(27.dp))
+        Spacer(modifier = Modifier.height(spacing.lg))
         Box(
             modifier = Modifier
                 .size(200.dp)
-                .border(10.dp, MaterialTheme.colorScheme.onPrimaryContainer, shape = CircleShape),
+                .border(10.dp, colors.onSurface, shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "$countdown",
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = typography.alert,
+                color = colors.onSurface,
                 textAlign = TextAlign.Center,
                 fontSize = 96.sp,
                 fontWeight = FontWeight.W700
             )
         }
-        Spacer(modifier = Modifier.height(27.dp))
+        Spacer(modifier = Modifier.height(spacing.lg))
         Text(
             text = stringResource(R.string.segundos_activando_alarma),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            style = typography.alert,
+            color = colors.onSurface,
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(97.dp))
 
-        CustomButton2(
+        // Posible Color inverso
+        CustomButton(
+            modifier = Modifier.padding(8.dp),
             text = stringResource(R.string.cancelar_alarma),
-            color = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
         ) {
             viewModel.cancelEmergency()
             val activity = context as? Activity

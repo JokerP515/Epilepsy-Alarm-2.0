@@ -24,7 +24,7 @@ import com.uan.epilepsyalarm20.domain.models.MainViewModel
 import com.uan.epilepsyalarm20.ui.navigation.AppNavigation
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.screens.LoadingScreen
-import com.uan.epilepsyalarm20.ui.theme.EpilepsyAlarm20Theme
+import com.uan.designsystem.uikit.theme.UanTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,8 +42,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val windowInsetsController = androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.isAppearanceLightStatusBars = false
+
         setContent {
-            EpilepsyAlarm20Theme {
+            UanTheme {
                 val mainViewModel: MainViewModel = hiltViewModel()
                 val userExistsState by mainViewModel.userExists.collectAsState(initial = null)
 
