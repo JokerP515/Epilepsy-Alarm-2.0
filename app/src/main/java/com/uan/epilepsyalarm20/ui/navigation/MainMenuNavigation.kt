@@ -1,21 +1,17 @@
 package com.uan.epilepsyalarm20.ui.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,76 +20,92 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.uan.designsystem.uikit.components.UanAppBar
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ActivationMethodScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ContactsScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.ExplicationScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.InformationScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.RegisterScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.SoundSelectScreen
-import com.uan.epilepsyalarm20.ui.screens.mainMenu.StartScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ConfigurationScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ContactsScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.ExplicationScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.InformationScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.NewContactScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.RegisterScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.SoundSelectScreen
+import com.uan.epilepsyalarm20.ui.screens.menu.StartScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainMenuNavigation(navController: NavHostController) {
-    val items = listOf(
-        Routes.Inicio to Icons.Default.Home,
-        Routes.PerfilUsuario to Icons.Default.Person,
-        Routes.Contactos to Icons.Default.Phone,
-        Routes.ConfigAlarma to Icons.Default.Settings,
-        Routes.Informacion to Icons.Default.Info
+    val navItems = listOf(
+        Routes.Config to Icons.Outlined.Settings,
+        Routes.Inicio to Icons.Outlined.Home,
+        Routes.PerfilUsuario to Icons.Outlined.Person
     )
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry.value?.destination?.route
+    val selectedIndex = navItems.indexOfFirst { it.first.id == currentRoute }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.epilepsy_alarm)) },
-                colors = TopAppBarDefaults.topAppBarColors()
+            UanAppBar(
+                title = stringResource(R.string.epilepsy_alarm),
+                modifier = Modifier.padding(
+                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+                )
             )
         },
         bottomBar = {
-            NavigationBar {
-                val currentBackStackEntry = navController.currentBackStackEntryAsState()
-                val currentRoute = currentBackStackEntry.value?.destination?.route
+            CustomUanToolbar(
+                selectedIndex = selectedIndex,
+                onItemSelected = { index ->
+                    val targetRoute = navItems[index].first.id
 
-                items.forEach { (route, icon) ->
-                    NavigationBarItem(
-                        icon = { Icon(imageVector = icon, contentDescription = null) },
-                        label = { Text(route.id) },
-                        selected = currentRoute == route.id,
-                        onClick = {
-                            if(currentRoute != route.id) {
-                                navController.navigate(route.id) {
-                                    popUpTo(Routes.Inicio.id) { inclusive = false }
-                                    launchSingleTop = true
-                                }
-                            }
+                    if (currentRoute != targetRoute) {
+                        navController.navigate(targetRoute) {
+                            popUpTo(Routes.Inicio.id) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                items = navItems.map { (route, icon) ->
+                    CustomToolbarItemData(
+                        contentDescription = route.id,
+                        icon = {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null
+                            )
                         }
                     )
                 }
-            }
+            )
         }
-
     ) { innerPadding ->
         Box (modifier = Modifier.padding(innerPadding)) {
             NavHost(
                 navController = navController,
-                startDestination = Routes.Informacion.id
+                startDestination = Routes.Inicio.id
             ) {
-                composable(Routes.Inicio.id) { StartScreen(hiltViewModel(), navController) }
-                composable(Routes.PerfilUsuario.id) { RegisterScreen(hiltViewModel(), {}, navController, true) }
-                composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(), navController) }
-                composable(Routes.Informacion.id) { InformationScreen() }
-                composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController, {}, true) }
-                composable(Routes.ConfigActivacionAlarma.id) {
-                    ActivationMethodScreen(
-                        hiltViewModel(),
-                        navController,
-                        {},
-                        true
-                    )
-                }
+                composable(Routes.Inicio.id) { StartScreen() }
+                composable(Routes.PerfilUsuario.id) { RegisterScreen(
+                    registerViewModel = hiltViewModel(),
+                    navController = navController,
+                    boolean = true,
+                    contactsViewModel = hiltViewModel(),
+                    emergencyViewModel = hiltViewModel()
+                ) }
+                composable(Routes.Contactos.id) { ContactsScreen(hiltViewModel(),emergencyViewModel = hiltViewModel(), navController) }
+                composable(Routes.NuevoContacto.id) { NewContactScreen(hiltViewModel(), navController) }
+                composable(Routes.Informacion.id) { InformationScreen(navController) }
+                composable(Routes.Config.id) { ConfigurationScreen(navController) }
+                composable(Routes.ConfigAlarma.id) { ExplicationScreen(navController=navController, boolean = true) }
+//                composable(Routes.ConfigActivacionAlarma.id) {
+//                    ActivationMethodScreen(
+//                        hiltViewModel(),
+//                        navController,
+//                        {},
+//                        true
+//                    )
+//                }
                 composable(Routes.ConfigSonidoAlarma.id) {
                     SoundSelectScreen(
                         hiltViewModel(),

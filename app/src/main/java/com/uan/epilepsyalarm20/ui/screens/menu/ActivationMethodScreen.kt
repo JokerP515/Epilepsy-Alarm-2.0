@@ -1,4 +1,4 @@
-package com.uan.epilepsyalarm20.ui.screens.mainMenu
+package com.uan.epilepsyalarm20.ui.screens.menu
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -24,6 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.uan.epilepsyalarm20.R
@@ -36,6 +41,11 @@ import com.uan.epilepsyalarm20.ui.dropdown.EnumDropdown
 import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
 import com.uan.epilepsyalarm20.ui.theme.imageSize
 
+@Deprecated(
+    message = "No need to use this screen as there's only one option to activate the alarm.",
+    replaceWith = ReplaceWith("SoundSelectScreen"),
+    level = DeprecationLevel.WARNING
+)
 @Composable
 fun ActivationMethodScreen(
     activationMethodViewModel: ActivationMethodViewModel,
@@ -67,21 +77,45 @@ fun ActivationMethodScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .then(
-                if (!boolean) Modifier.padding(
-                    top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
-                )
+                if (!boolean) {
+                    Modifier
+                        .padding(
+                            top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding(),
+                            bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+                        )
+                }
                 else Modifier
             ),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeadlineCard(
-            title = stringResource(R.string.configura_la_alarma),
-            description = stringResource(R.string.explicacion_activacion_alarma)
+            title = stringResource(R.string.configura_la_alarma)
         )
 
+        BasicText(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append("Selecciona la ")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
+                    append("cantidad de veces")
+                }
+                withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                    append(" que deberás presionar el botón de encendido y apagado para la activación de la alarma.")
+                }
+            },
+            style = MaterialTheme.typography.titleLarge
+        )
+
+//        Text(
+//            text = stringResource(R.string.explicacion_activacion_alarma),
+//            style = MaterialTheme.typography.titleLarge,
+//            color = MaterialTheme.colorScheme.onBackground
+//        )
+
         Image(
-            painter = painterResource(R.drawable.recurso1_2),
+            painter = painterResource(R.drawable.phone_adjusted),
             contentDescription = "Dispositivo Activación",
             modifier = Modifier.size(imageSize())
         )
@@ -99,7 +133,10 @@ fun ActivationMethodScreen(
             onOptionSelected = { selectedActivationMethod = it }
         )
 
-        CustomButton(text = stringResource(R.string.guardar_opcion)) {
+        CustomButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.guardar_opcion)
+        ) {
             activationMethodViewModel.saveActivationMethod(selectedActivationMethod.getValue())
             if(navController != null) {
                 navController.navigate(Routes.ConfigSonidoAlarma.id)

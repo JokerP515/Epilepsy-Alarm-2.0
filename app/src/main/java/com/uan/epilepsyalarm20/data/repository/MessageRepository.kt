@@ -9,7 +9,7 @@ class MessageRepository @Inject constructor(
     private val smsSender: SmsSender,
     //private val whatsAppSender: WhatsAppSender
 ) {
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    @RequiresPermission(allOf = [Manifest.permission.READ_PHONE_STATE, Manifest.permission.SEND_SMS])
     fun sendSms(phoneNumber: String, message: String, location: String) {
         smsSender.sendSms(phoneNumber, message, location)
     }

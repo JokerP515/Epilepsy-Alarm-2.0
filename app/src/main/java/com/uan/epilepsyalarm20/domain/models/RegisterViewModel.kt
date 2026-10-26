@@ -25,6 +25,8 @@ class RegisterViewModel
     var document by mutableStateOf("")
 
     suspend fun getUser() = userRepository.getUser()
+    suspend fun getEmergencyMessage() = userRepository.getEmergencyMessage()
+    suspend fun getEmergencyInstructions() = userRepository.getEmergencyInstructions()
 
     fun saveUser() {
         viewModelScope.launch {
@@ -37,6 +39,22 @@ class RegisterViewModel
                 numeroDeDocumento=document
             )
             userRepository.insertUser(user)
+        }
+    }
+
+    fun updateUser() {
+        viewModelScope.launch {
+            val user = UserEntity(
+                id = 1,
+                nombre = name,
+                apellido = lastName,
+                tipoDeSangre = bloodType,
+                tipoDeDocumento = documentType,
+                numeroDeDocumento = document,
+                mensajeEmergencia = getEmergencyMessage(),
+                instruccionesEmergencia = getEmergencyInstructions()
+            )
+            userRepository.updateUser(user)
         }
     }
 

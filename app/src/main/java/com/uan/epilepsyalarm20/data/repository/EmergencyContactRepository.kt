@@ -20,4 +20,7 @@ class EmergencyContactRepository @Inject constructor(
     suspend fun updateEmergencyContact(emergencyContact: EmergencyContactEntity) =
         emergencyContactDao.updateEmergencyContact(emergencyContact)
 
+    suspend fun getFirstEmergencyContact(): EmergencyContactEntity? =
+        emergencyContactDao.getFirstEmergencyContact()
+
 }

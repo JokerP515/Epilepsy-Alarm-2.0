@@ -6,5 +6,5 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun imageSize(): Dp {
-    return 250.dp
+    return 300.dp
 }

@@ -1,15 +1,17 @@
 package com.uan.epilepsyalarm20
 
-import android.os.Bundle
 import android.Manifest
+import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresPermission
-import com.uan.epilepsyalarm20.ui.navigation.AppNavigation
-import com.uan.epilepsyalarm20.ui.navigation.routes.Routes
-import com.uan.epilepsyalarm20.ui.theme.EpilepsyAlarm20Theme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.uan.designsystem.uikit.theme.UanTheme
+import com.uan.epilepsyalarm20.domain.models.EmergencyViewModel
+import com.uan.epilepsyalarm20.ui.screens.emergency.EmergencyScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,15 +26,26 @@ class EmergencyActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val windowInsetsController = androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.isAppearanceLightStatusBars = false
+
         // Configuración de la pantalla para que aparezca sobre la pantalla de bloqueo
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        )
         setShowWhenLocked(true)
         setTurnScreenOn(true)
 
         // Mostrar la pantalla de emergencia cuando se active la alarma
         setContent {
-            EpilepsyAlarm20Theme {
-                AppNavigation(Routes.Emergencia)
+            UanTheme {
+                val viewModel: EmergencyViewModel = hiltViewModel()
+                LaunchedEffect(Unit) {
+                    viewModel.exitEmergencyScreen.collect {
+                        finish() // Cierra toda la Task relacionada a la emergencia sin terminar el servicio
+                    }
+                }
+                EmergencyScreen(viewModel)
             }
         }
     }

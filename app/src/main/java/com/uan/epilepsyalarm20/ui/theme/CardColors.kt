@@ -12,3 +12,11 @@ fun defaultCardColors(): CardColors {
         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
     )
 }
+
+@Composable
+fun reminderCardColors(): CardColors {
+    return CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.errorContainer,
+        contentColor = MaterialTheme.colorScheme.primaryContainer
+    )
+}

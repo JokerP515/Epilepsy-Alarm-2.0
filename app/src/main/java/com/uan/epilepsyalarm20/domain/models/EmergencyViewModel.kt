@@ -17,16 +17,21 @@ import com.uan.epilepsyalarm20.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class EmergencyViewModel @Inject constructor(
@@ -59,6 +64,9 @@ class EmergencyViewModel @Inject constructor(
 
     private var torchJob: Job? = null // Para manejar la linterna
 
+    private val _exitEmergencyScreen = MutableSharedFlow<Unit>()
+    val exitEmergencyScreen: SharedFlow<Unit> = _exitEmergencyScreen.asSharedFlow()
+
     init {
         viewModelScope.launch {
             launch {
@@ -67,21 +75,39 @@ class EmergencyViewModel @Inject constructor(
             launch {
                 emergencyRepository.getEmergencyContacts().collect { contacts ->
                     _emergencyContacts.value = contacts
+                    _isAnyEmergencyContact.value = contacts.isNotEmpty()
+                    if (contacts.isNotEmpty()) {
+                        preferencesManager.saveIsAnyContact()
+                    } else {
+                        preferencesManager.allContactsDeleted()
+                    }
+                    preferencesManager.saveContactCount(contacts.size)
                 }
             }
-            launch {
-                _isAnyEmergencyContact.value = preferencesManager.getIsAnyContact()
-            }
         }
+    }
+
+    suspend fun getUser() = userRepository.getUser()
+
+    suspend fun getFirstEmergencyContact() = emergencyRepository.getFirstEmergencyContact()
+
+    suspend fun getFirstConfirmedContact(): EmergencyContactEntity? {
+        return emergencyRepository.getEmergencyContacts().first().find { it.isConfirmed }
     }
 
     fun getUserInstructions(): String? {
         return user.value?.instruccionesEmergencia
     }
 
+    fun getUserMessage(): String? {
+        return user.value?.mensajeEmergencia
+    }
+
     @RequiresPermission(allOf = [
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.SEND_SMS,
         Manifest.permission.READ_PHONE_STATE
     ])
     fun startEmergencyCountdown() {
@@ -90,8 +116,8 @@ class EmergencyViewModel @Inject constructor(
         _isEmergencyActive.value = false
 
         viewModelScope.launch {
-            for (i in 5 downTo 1) {
-                delay(1000L)
+            for (i in 5 downTo 0) {
+                delay(1.seconds)
                 if (_isCancelled.value) {
                     _countdown.value = 5
                     return@launch
@@ -105,18 +131,30 @@ class EmergencyViewModel @Inject constructor(
         }
     }
 
+    fun pauseEmergency() {
+        audioPlayer.stopAudio()
+        stopTorchFlashing()
+    }
+
     fun cancelEmergency() {
         _isCancelled.value = true
         _countdown.value = 5
         _isEmergencyActive.value = false
         audioPlayer.stopAudio()
         stopTorchFlashing()
+
+        viewModelScope.launch {
+            _exitEmergencyScreen.emit(Unit)
+        }
     }
 
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    @RequiresPermission(allOf = [
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ])
     private suspend fun fetchLocation(): String {
-        return withTimeoutOrNull(5000) {
-            suspendCoroutine  { continuation ->
+        return withTimeoutOrNull(5.seconds) {
+            suspendCancellableCoroutine { continuation ->
                 locationManager.getCurrentLocation { link ->
                     continuation.resume(link)
                 }
@@ -125,38 +163,47 @@ class EmergencyViewModel @Inject constructor(
     }
 
 
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
-    private fun sendMessage(phoneNumber: String, emergencyMessage: String, location: String) {
-        messageRepository.sendSms("+57$phoneNumber", emergencyMessage, location)
+    @RequiresPermission(allOf = [Manifest.permission.READ_PHONE_STATE, Manifest.permission.SEND_SMS])
+    fun sendPreparedMessage(phoneNumber: String, emergencyMessage: String, location: String) {
+        val hasPlus = phoneNumber.startsWith("+")
+        val preparedPhoneNumber = if (hasPlus) phoneNumber else "+57$phoneNumber"
+        messageRepository.sendSms(preparedPhoneNumber, emergencyMessage, location)
     }
 
     @RequiresPermission(allOf = [
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.SEND_SMS,
         Manifest.permission.READ_PHONE_STATE
     ])
     fun onActivateEmergency() {
+        val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
+
         viewModelScope.launch {
-            val locationDeferred = async  { fetchLocation() }
-            val location = locationDeferred.await()
-            val soundFile = preferencesManager.getSoundPreference() ?: "alarm_one.mp3"
-            _mapsLink.value = location
+            // Verifica si hay contactos de emergencia y procede con el envío del mensaje
+            if(_isAnyEmergencyContact.value) {
+                val location = fetchLocation()
+                _mapsLink.value = location
+                val userEntity = user.value
+                val contacts = emergencyContacts.value
+                _isEmergencyActive.value = true
 
-            val userEntity = user.value
-            val contacts = emergencyContacts.value
+                if (userEntity != null) {
+                    val message = userEntity.mensajeEmergencia ?: "Ayuda, tengo una emergencia."
 
-            _isEmergencyActive.value = true
-            audioPlayer.playAudio(soundFile, true)
-            startTorchFlashing()
-
-            if (userEntity != null && _isAnyEmergencyContact.value) {
-                val message = userEntity.mensajeEmergencia
-                contacts.forEach { contact ->
-                    sendMessage(contact.phoneNumber, message ?: "Ayuda, tengo una emergencia", location)
+                    contacts.forEach { contact ->
+                        if(contact.isConfirmed){
+                            sendPreparedMessage(contact.phoneNumber, message, location)
+                        }
+                    }
                 }
             }
+            audioPlayer.playAudio(soundFile, true)
+            startTorchFlashing()
         }
     }
+
 
     // Encender y apagar la linterna constantemente
     private fun startTorchFlashing() {
@@ -167,9 +214,9 @@ class EmergencyViewModel @Inject constructor(
         torchJob = viewModelScope.launch {
             while (_isEmergencyActive.value) {
                 cameraManager.setTorchMode(cameraId, true) // Encender linterna
-                delay(500)
+                delay(500.milliseconds)
                 cameraManager.setTorchMode(cameraId, false) // Apagar linterna
-                delay(500)
+                delay(500.milliseconds)
             }
         }
     }

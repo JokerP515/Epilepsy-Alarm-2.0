@@ -22,4 +22,7 @@ interface EmergencyContactDao {
     @Update
     suspend fun updateEmergencyContact(emergencyContact: EmergencyContactEntity)
 
+    @Query("SELECT * FROM emergency_contacts LIMIT 1")
+    suspend fun getFirstEmergencyContact(): EmergencyContactEntity?
+
 }

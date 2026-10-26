@@ -13,6 +13,8 @@ class UserRepository @Inject constructor(
 
     suspend fun insertUser(user: UserEntity) = userDao.insertUser(user)
 
+    suspend fun updateUser(user: UserEntity) = userDao.updateUser(user)
+
     suspend fun getUser() = userDao.getUser()
 
     suspend fun updateEmergencyMessage(message: String) = userDao.updateEmergencyMessage(message)
