@@ -96,13 +96,13 @@ fun ActivationMethodScreen(
         BasicText(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-                    append("Selecciona la ")
+                    append("Para activar la alarma, mantén presionado el botón de ")
                 }
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)) {
-                    append("cantidad de veces")
+                    append("subir volumen")
                 }
                 withStyle (style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-                    append(" que deberás presionar el botón de encendido y apagado para la activación de la alarma.")
+                    append(" durante 5 segundos.")
                 }
             },
             style = MaterialTheme.typography.titleLarge

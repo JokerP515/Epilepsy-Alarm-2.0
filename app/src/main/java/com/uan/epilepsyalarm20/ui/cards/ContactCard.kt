@@ -29,6 +29,7 @@ import com.uan.designsystem.uikit.components.UanModal
 import com.uan.designsystem.uikit.theme.UanThemeTokens
 import com.uan.epilepsyalarm20.R
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
+import com.uan.epilepsyalarm20.domain.models.ContactsViewModel
 import com.uan.epilepsyalarm20.ui.buttons.CustomButton
 
 @Composable
@@ -110,9 +111,10 @@ fun ContactCard(
             onDismiss = { showEditDialog = false },
             onConfirm = { updatedContact ->
                 onUpdate(
-                    contact.copy(
-                        name = updatedContact.name,
-                        phoneNumber = updatedContact.phoneNumber
+                    ContactsViewModel.buildEditedContact(
+                        original = contact,
+                        newName = updatedContact.name,
+                        newPhone = updatedContact.phoneNumber
                     )
                 )
                 showEditDialog = false

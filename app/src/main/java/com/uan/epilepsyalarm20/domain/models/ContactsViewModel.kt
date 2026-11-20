@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uan.epilepsyalarm20.data.local.entities.EmergencyContactEntity
 import com.uan.epilepsyalarm20.data.repository.EmergencyContactRepository
+import com.uan.epilepsyalarm20.utils.cleanPhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -55,6 +56,22 @@ class ContactsViewModel @Inject constructor(
     fun updateEmergencyContact(contact: EmergencyContactEntity) {
         viewModelScope.launch {
             contactsRepository.updateEmergencyContact(contact)
+        }
+    }
+
+    companion object {
+        fun buildEditedContact(
+            original: EmergencyContactEntity,
+            newName: String,
+            newPhone: String
+        ): EmergencyContactEntity {
+            val cleanedPhone = cleanPhoneNumber(newPhone)
+            val phoneChanged = cleanedPhone != cleanPhoneNumber(original.phoneNumber)
+            return original.copy(
+                name = newName.trim(),
+                phoneNumber = cleanedPhone,
+                isConfirmed = original.isConfirmed && !phoneChanged
+            )
         }
     }
 }

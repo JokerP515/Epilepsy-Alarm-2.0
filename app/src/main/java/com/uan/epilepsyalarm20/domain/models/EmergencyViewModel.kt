@@ -54,8 +54,10 @@ class EmergencyViewModel @Inject constructor(
 
     private val _isAnyEmergencyContact = MutableStateFlow(false)
 
-    private val _countdown = MutableStateFlow(5) // Contador de 5 segundos
+    private val _countdown = MutableStateFlow(COUNTDOWN_SECONDS) // Contador de 5 segundos
     val countdown: StateFlow<Int> = _countdown.asStateFlow()
+
+    private var countdownJob: Job? = null // Cuenta regresiva en curso
 
     private val _isCancelled = MutableStateFlow(false)
 
@@ -111,18 +113,17 @@ class EmergencyViewModel @Inject constructor(
         Manifest.permission.READ_PHONE_STATE
     ])
     fun startEmergencyCountdown() {
+        if (countdownJob?.isActive == true) return
+
         _isCancelled.value = false
-        _countdown.value = 5
+        _countdown.value = COUNTDOWN_SECONDS
         _isEmergencyActive.value = false
 
-        viewModelScope.launch {
-            for (i in 5 downTo 0) {
-                delay(1.seconds)
-                if (_isCancelled.value) {
-                    _countdown.value = 5
-                    return@launch
-                }
+        countdownJob = viewModelScope.launch {
+            for (i in COUNTDOWN_SECONDS downTo 1) {
                 _countdown.value = i
+                delay(1.seconds)
+                if (_isCancelled.value) return@launch
             }
             if (!_isCancelled.value) {
                 _isEmergencyActive.value = true
@@ -138,7 +139,9 @@ class EmergencyViewModel @Inject constructor(
 
     fun cancelEmergency() {
         _isCancelled.value = true
-        _countdown.value = 5
+        countdownJob?.cancel() // Detiene la cuenta regresiva de inmediato
+        countdownJob = null
+        _countdown.value = COUNTDOWN_SECONDS
         _isEmergencyActive.value = false
         audioPlayer.stopAudio()
         stopTorchFlashing()
@@ -226,5 +229,9 @@ class EmergencyViewModel @Inject constructor(
         val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         val cameraId = cameraManager.cameraIdList.firstOrNull() ?: return
         cameraManager.setTorchMode(cameraId, false) // Apagar linterna al cancelar emergencia
+    }
+
+    companion object {
+        const val COUNTDOWN_SECONDS = 5
     }
 }
